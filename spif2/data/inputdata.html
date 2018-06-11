@@ -1,0 +1,285 @@
+<!doctype html>
+<html>
+
+  <head>
+    <meta charset="utf-8">
+    <link rel="stylesheet"  href="/css/bootstrap.min.css" />
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="/js/jquery-3.2.1.slim.min.js"></script>
+    <script src="/js/popper.min.js"></script>
+    <script src="/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="/js/jquery.flot.min.js"></script>
+    
+    <title>Setup Antenna Dish</title>
+    
+  </head>
+
+<body>
+    <nav class="navbar navbar-expand-lg navbar-light bg-success">
+        <a class="navbar-brand" href="#">THAICOM</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+      
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+          <ul class="navbar-nav mr-auto">
+            <li class="nav-item">
+              <a class="nav-link" href="/setup">Home</a>
+            </li>
+            <li class="nav-item active">
+              <a class="nav-link" href="#">Manual-control<span class="sr-only">(current)</span></a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="/demo">Demo</a>
+            </li>
+          </ul>
+        </div>
+      </nav>
+  <script src="/js/bootstrap.min.js"></script>
+  <div class="container">
+    <h2>INPUT DATA</h2>
+    
+      <form id="form" id="target_motor">
+          <div class="form-row" id="future">
+          <label>CL:</label>
+          <div class="col"><input class="form-control" id="target_cl" type="number" step="0.1" max="20" min="-20" value=0></div>
+          <label>EL:</label>
+          <div class="col"><input class="form-control" id="target_el" type="number" step="0.1" max="100" min="-2" value=60></div>
+          <label>AZ:</label>
+          <div class="col"><input class="form-control" id="target_az" type="number" step="0.1" value=0></div>
+          <label>POL:</label>
+          <div class="col"><input class="form-control" id="target_pol" type="number" step="0.1" value=0></div>
+          <!--<input type="submit" value="Send">-->
+          <button type="submit" class="btn btn-primary">Submit</button>
+        </div>
+      </form>
+    
+    <br>
+      <div class="card text-black bg-light mb-3" style="max-width: 40rem;">
+          <b><div class="card-header bg-primary text-black">SENSOR</div></b>
+          <div class="card-body">
+            <div class="row">
+              <div class="col-4">CL:  <span id="cl"></span></div>
+              <div class="col-4">EL:  <span id="el"></span></div>
+              <div class="col-4">AZ:  <span id="az"></span></div>
+            </div>
+        </div>
+      </div>
+      <div class="card text-black bg-light mb-3" style="max-width: 40rem;">
+          <b><div class="card-header bg-primary text-black">CURRENT MOTOR</div></b>
+              <div class="card-body">
+                <div class="row">
+                <div class="col-4" >CL:  <span id="current_cl"></span></div>
+                <div class="col-4" >EL:  <span id="current_el"></span></div>
+                <div class="col-4" >AZ:  <span id="current_az"></span></div>
+              </div>
+          </div>
+        </div>
+        <div class="card text-black bg-light mb-3" style="max-width: 40rem;">
+          <b><div class="card-header bg-primary text-black">TARGET MOTOR</div></b>
+            <div class="card-body">
+              <div class="row">
+                <div class="col-4" >CL:  <span id="target_cl"></span></div>
+                  <div class="col-4" >EL:  <span id="target_el"></span></div>
+                  <div class="col-4" >AZ:  <span id="target_az"></span></div>
+                </div>
+              </div>
+        </div>
+        <div class="card text-black bg-light mb-3" style="max-width: 40rem;">
+            <b><div class="card-header bg-primary text-black">RF SIGNAL</div></b>
+                <div class="card-body">   
+                  <div class="row">
+                    <div class="col-4" >LockedStatus:   <span id="lockstatus"></span></div>
+                    <div class="col-4" >C/N:            <span id="cn"></span></div>
+                    <div class="col-4" >Power:          <span id="power"></span></div>
+                    <div class="col-4" >L-Band_Freq.:   <span id="lbandfreq"></span></div>
+                    <div class="col-4" >Symbol_rate:    <span id="symrate"></span></div>
+                    <div class="col-4" >BER:            <span id="ber"></span></div>
+                  </div>
+                </div>
+        </div>
+      <div class="row">
+        <div id="placeholder" style="width:800px;height:200px"></div>
+      </div>
+      <div class="row">
+        <div id="placeholder2" style="width:800px;height:200px"></div>
+      </div>
+      <div class="row">
+        <div id="placeholder3" style="width:800px;height:200px"></div>
+      </div>
+      <div class="row">
+        <div id="placeholder4" style="width:800px;height:200px"></div>
+      </div>
+    <script type="text/javascript" charset="utf-8">
+
+      var socket = io.connect('http://' + document.domain + ':' + location.port);
+      //var socket = io.connect('http://192.168.56.1:3000');
+      socket.on('connect', function () {
+        console.log("Socket connected");
+      });
+      var acx, acy, acz, cl, el, az;
+      var current_cl, current_el, current_az, target_cl,target_el, target_az
+      socket.on('sensor-update', function (data) {
+      cl = data.cl;
+      el = data.el;
+      az = data.az;
+      $("#cl").text(cl);
+      $("#el").text(el);
+      $("#az").text(az);
+      console.log("Socket connectedss");
+      graph_cl.push([Date.now(), cl]);
+        if (graph_cl.length > 100) {
+          graph_cl = graph_cl.slice(1);
+        }
+        graph_motor_cl.push([Date.now(), current_cl]);
+        if (graph_motor_cl.length > 100) {
+          graph_motor_cl = graph_motor_cl.slice(1);
+        }
+        graph_target_cl.push([Date.now(), target_cl]);
+        if (graph_target_cl.length > 100) {
+          graph_target_cl = graph_target_cl.slice(1);
+        }
+      updateGraph3("#placeholder", graph_cl,graph_motor_cl,graph_target_cl,"CL","MOTOR CL","TARGET CL");
+
+      graph_el.push([Date.now(), el]);
+        if (graph_el.length > 100) {
+          graph_el = graph_el.slice(1);
+        }
+      graph_motor_el.push([Date.now(), el]);
+      if (graph_motor_el.length > 100) {
+        graph_motor_el = graph_motor_el.slice(1);
+      }
+      graph_target_el.push([Date.now(), el]);
+      if (graph_target_el.length > 100) {
+        graph_target_el = graph_target_el.slice(1);
+      }
+      updateGraph3("#placeholder2", graph_el,graph_motor_el,graph_target_el,"EL","MOTOR EL","TARGET EL");
+
+      graph_az.push([Date.now(), az]);
+        if (graph_az.length > 100) {
+          graph_az = graph_az.slice(1);
+        }
+      
+      graph_motor_az.push([Date.now(), current_az]);
+      if (graph_motor_az.length > 100) {
+        graph_motor_az = graph_motor_az.slice(1);
+      }
+      graph_target_az.push([Date.now(), target_az]);
+      if (graph_target_az.length > 100) {
+        graph_target_az = graph_target_az.slice(1);
+      }
+      
+      updateGraph3("#placeholder3", graph_az,graph_motor_az,graph_target_az,"AZ","MOTOR AZ","TARGET AZ");
+
+
+      });
+      $('form').submit(function(e){
+     e.preventDefault();
+     var target_cl = $('#target_cl').val();
+     var target_el = $('#target_el').val();
+     var target_az = $('#target_az').val();
+     var target_pol = $('#target_pol').val();
+     var message={'target_cl':target_cl,'target_el':target_el,'target_az':target_az,'target_pol': target_pol}
+     socket.emit('target', message);
+        });
+      socket.on('NIM',function(data){
+        lockstatus = data.lockstatus
+        cn = data.cn
+        power = data.power
+        lbandfreq = data.lbandfreq
+        symrate = data.symrate
+        ber = data.ber
+        $("#lockstatus").text(lockstatus);
+        $("#cn").text(cn);
+        $("#power").text(power);
+        $("#lbandfreq").text(lbandfreq);
+        $("#symrate").text(symrate);
+        $("#ber").text(ber);
+        //$("#rfsignal").text(rfsignal);
+      });
+      socket.on('state',function(data){
+        state = data.state
+        console.log(state);
+        $("#state").text(state);
+      });
+      socket.on('current_motor', function(data) {
+        current_cl = data.current_cl;
+        current_el = data.current_el;
+        current_az = data.current_az;
+        current_pol = data.current_pol;
+        
+        $("#current_cl").text(current_cl);
+        $("#current_el").text(current_el);
+        $("#current_az").text(current_az);
+        $("#current_pol").text(current_pol);
+        
+       
+        
+        graph_rf.push([Date.now(), cn]);
+        if (graph_rf.length > 100) {
+          graph_rf = graph_rf.slice(1);
+        }
+
+        updateGraph("#placeholder4", graph_rf, "RF")
+      });
+      socket.on('target_motor', function(data) {
+        target_cl = data.target_cl;
+        target_el = data.target_el;
+        target_az = data.target_az;
+        target_pol = data.target_pol;
+
+        $("#target_cl").text(target_cl);
+        $("#target_el").text(target_el);
+        $("#target_az").text(target_az);
+        $("#target_pol").text(target_pol);
+      });
+      
+    </script>
+    <script>
+      var graph_cl = [];
+      var graph_motor_cl = [];
+      var graph_data2 = [];
+      var graph_data3 = [];
+      var graph_target_cl = [];
+      var graph_el = [];
+      var graph_motor_el = [];
+      var graph_target_el = [];
+      var graph_az = [];
+      var graph_motor_az = [];
+      var graph_target_az = [];
+      var graph_rf = [];
+      function updateGraph(s, g_data,name) {
+        $.plot(s, [
+          {label: name, data: g_data}
+        ], {
+          series: {
+            lines: { show: true },
+            points: { show: false }
+          },
+        });
+      }
+
+      function updateGraph3(s, g_data1,g_data2,g_data3,name1,name2,name3) {
+        $.plot(s, [
+          {label: name1, data: g_data1},
+          {label: name2, data: g_data2},
+          {label: name3, data: g_data3}
+        ], {
+          series: {
+            lines: { show: true },
+            points: { show: false }
+          },
+        });
+      }
+
+      $(document).ready(function() {  
+        updateGraph3("#placeholder", graph_cl,graph_motor_cl,graph_target_cl,"CL","MOTOR CL","TARGET CL");
+        updateGraph3("#placeholder2", graph_el,graph_motor_el,graph_target_el,"EL","MOTOR EL","TARGET EL");
+        updateGraph3("#placeholder3", graph_az,graph_motor_az,graph_target_az,"AZ","MOTOR AZ","TARGET AZ");
+        updateGraph("#placeholder4", graph_rf, "RF")
+      });
+      
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,158 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="stylesheet"  href="static/bootstrap.css" />
+    <script src="static/jquery.js"></script>
+    <script src="static/popper.js"></script>
+    <script src="static/bootstrap.js"></script>
+    
+    <title>Networking</title>
+    <style>
+        p.uppercase {
+            text-transform: uppercase;
+        }
+        
+        p.lowercase {
+            text-transform: lowercase;
+        }
+        
+        p.capitalize {
+            text-transform: capitalize;
+        }
+        </style>
+    
+  </head>
+
+  <body>
+      <nav class="navbar navbar-expand-lg navbar-light bg-success">
+          <a class="navbar-brand" href="./info.html">THAICOM</a>
+          <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+          </button>
+          <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav mr-auto">
+              <li class="nav-item">
+                <a class="nav-link" href="./info.html">Antenna Info</a>
+              </li>
+              <li class="nav-item">
+                  <a class="nav-link" href="./setup.html">Settings</a>
+              </li>
+              <li class="nav-item active">
+                <a class="nav-link" href="#">Networking<span class="sr-only">(current)</span></a>
+              </li>
+              <li class="nav-item">
+                  <a class="nav-link" href="./log.html">Logs</a>
+              </li>
+            </ul>
+          </div>
+      </nav>
+
+    
+      <div class="container">
+        <h1>Ethernet Setting</h1>
+          <div class="card text-black bg-light mb-3" tyle="max-width: 100%">
+            <b><div class="card-header bg-info text-white" >IP Configuration</div></b>
+              <div class="card-body">
+
+                
+                      <form id="set_heading">
+                          <div class="form-group row">
+                            <div class="col-2">IP Address :</div>
+                            <div class="col-2">
+                                <input type="number" maxlength="3" max="255"  min="0" class="form-control" id="ip1">
+                            </div>
+                            <div>.</div>
+                            <div class="col-2">
+                                <input type="number" maxlength="3" max="255"  min="0" class="form-control" id="ip2">
+                            </div>
+                            <div>.</div>
+                            <div class="col-2">
+                                <input type="number" maxlength="3" max="255"  min="0" class="form-control " id="ip3">
+                            </div>
+                            <div>.</div>
+                            <div class="col-2">
+                                <input type="number" maxlength="3" max="255"  min="0" class="form-control" id="ip4">
+                            </div>
+                          </div>
+                          <div class="form-group row">
+                              <div class="col-2">Subnet mask :</div>
+                              <div class="col-2">
+                                  <input type="number" maxlength="3" max="255"  min="0" class="form-control" id="mask1">
+                              </div>
+                              <div>.</div>
+                              <div class="col-2">
+                                  <input type="number" maxlength="3" max="255"  min="0" class="form-control" id="mask2">
+                              </div>
+                              <div>.</div>
+                              <div class="col-2">
+                                  <input type="number" maxlength="3" max="255"  min="0" class="form-control " id="mask3">
+                              </div>
+                              <div>.</div>
+                              <div class="col-2">
+                                  <input type="number" maxlength="3" max="255"  min="0" class="form-control" id="mask4">
+                              </div>
+                            </div>
+                            <div class="form-group row">
+                                <div class="col-2">Gateway :</div>
+                                <div class="col-2">
+                                    <input type="number" maxlength="3" max="255"  min="0" class="form-control" id="gw1">
+                                </div>
+                                <div>.</div>
+                                <div class="col-2">
+                                    <input type="number" maxlength="3" max="255"  min="0" class="form-control" id="gw2">
+                                </div>
+                                <div>.</div>
+                                <div class="col-2">
+                                    <input type="number" maxlength="3" max="255"  min="0" class="form-control " id="gw3">
+                                </div>
+                                <div>.</div>
+                                <div class="col-2">
+                                    <input type="number" maxlength="3" max="255"  min="0" class="form-control" id="gw4">
+                                </div>
+                              </div>
+                              <div class="form-group row">
+                                  <div class="col-2">DNS:</div>
+                                  <div class="col-2">
+                                      <input type="number" maxlength="3" max="255"  min="0" class="form-control" id="dns1">
+                                  </div>
+                                  <div>.</div>
+                                  <div class="col-2">
+                                      <input type="number" maxlength="3" max="255"  min="0" class="form-control" id="dns2">
+                                  </div>
+                                  <div>.</div>
+                                  <div class="col-2">
+                                      <input type="number" maxlength="3" max="255"  min="0" class="form-control " id="dns3">
+                                  </div>
+                                  <div>.</div>
+                                  <div class="col-2">
+                                      <input type="number" maxlength="3" max="255"  min="0" class="form-control" id="dns4">
+                                  </div>
+                                </div>
+                                <div class="form-group row">
+                                    <div class="col-2">TCP Port:</div>
+                                    <div class="col-3">
+                                        <input type="number" maxlength="5" max="65535"  min="0" class="form-control" id="tcpport">
+                                    </div>
+                                    
+                                  </div>
+                          <div class="form-group row">
+                            <div class="col-8"></div>
+                            <div class="col-4">
+                              <button type="submit" class="btn btn-primary">SET</button>
+                            </div>
+                          </div>
+                      </form>
+                    </div>
+                  </div>
+                </div>
+    
+    
+  <script language="JavaScript">
+    
+	
+  </script>
+  </body>
+
+</html>

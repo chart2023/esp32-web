@@ -1,0 +1,385 @@
+<!doctype html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="stylesheet" href="static/bootstrap.css" />
+    <script src="static/jquery.js"></script>
+    <script src="static/bootstrap.js"></script>
+    <title>Antenna Info</title>
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+    <style>
+        p.uppercase {
+            text-transform: uppercase;
+        }
+
+        p.lowercase {
+            text-transform: lowercase;
+        }
+
+        p.capitalize {
+            text-transform: capitalize;
+        }
+    </style>
+
+</head>
+
+<body>
+    <nav class="navbar navbar-expand-lg navbar-light bg-success">
+        <a class="navbar-brand" href="./info.html">THAICOM</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
+            aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav mr-auto">
+                <li class="nav-item active">
+                    <a class="nav-link" href="#">Antenna Info
+                        <span class="sr-only">(current)</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="./setup.html">Settings</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="./networking.html">Networking</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="./log.html">Logs</a>
+                </li>
+
+
+            </ul>
+        </div>
+    </nav>
+
+
+    <div class="container">
+        <h1></h1>
+        <div class="card text-black bg-light mb-3">
+            <b>
+                <div class="card-header bg-info text-white">STATUS</div>
+            </b>
+            <div class="card-body">
+
+                <div class="card text-black bg-light mb-3" style="max-width: 100%">
+                    <b>
+                        <div class="card-header bg-primary text-black">Antenna status</div>
+                    </b>
+                    <div class="card-body">
+                        <div class="custom-control custom-radio">
+                            <input type="radio" id="AntInitialize" class="custom-control-input" name="AntStatus">
+                            <label class="custom-control-label" for="AntInitialize">Initialize</label>
+                        </div>
+                        <div class="custom-control custom-radio">
+                            <input type="radio" id="AntSearching" class="custom-control-input" name="AntStatus">
+                            <label class="custom-control-label" for="AntSearching">Searching</label>
+                        </div>
+                        <div class="custom-control custom-radio">
+                            <input type="radio" id="AntTracking" class="custom-control-input" name="AntStatus">
+                            <label class="custom-control-label" for="AntTracking">Tracking</label>
+                        </div>
+                        <div class="custom-control custom-radio">
+                            <input type="radio" id="AntBlockage" class="custom-control-input" name="AntStatus">
+                            <label class="custom-control-label" for="AntBlockage">Blockage</label>
+                        </div>
+                    </div>
+                </div>
+
+
+
+                <div class="card text-black bg-light mb-3" style="max-width: 100%">
+                    <b>
+                        <div class="card-header bg-primary text-black">System status</div>
+                    </b>
+                    <div class="card-body">
+                        <div class="custom-control custom-checkbox custom-control-inline">
+                            <input type="checkbox" id="BucStatus" name="BucStatus" class="custom-control-input">
+                            <label class="custom-control-label" for="BucStatus">BUC</label>
+                        </div>
+
+                        <div class="custom-control custom-checkbox custom-control-inline">
+                            <input type="checkbox" id="LnbStatus" name="LnbStatus" class="custom-control-input">
+                            <label class="custom-control-label" for="LnbStatus">LNB</label>
+                        </div>
+
+                        <div class="custom-control custom-checkbox custom-control-inline">
+                            <input type="checkbox" id="ModemStatus" name="ModemStatus" class="custom-control-input">
+                            <label class="custom-control-label" for="ModemStatus">Modem</label>
+                        </div>
+
+
+                    </div>
+                </div>
+
+
+
+                <div class="card text-black bg-light mb-3" style="max-width: 100%">
+                    <b>
+                        <div class="card-header bg-primary text-black">Link Information</div>
+                    </b>
+                    <div class="card-body">
+                        <div class="custom-control custom-radio custom-control-inline">
+                            <input type="radio" id="customRadio5" name="customRadio5" class="custom-control-input">
+                            <label class="custom-control-label" for="customRadio5">DVB</label>
+                        </div>
+                        <div class="custom-control custom-radio custom-control-inline">
+                            <input type="radio" id="customRadio6" name="customRadio5" class="custom-control-input">
+                            <label class="custom-control-label" for="customRadio6">SCPC</label>
+                        </div>
+
+                        <div class="input-group mb-3">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text" id="satname_value"> Satellite</span>
+                            </div>
+                            <input type="text" class="form-control" placeholder="Satellite name" aria-label="SatName" aria-describedby="satname_value" id="SatName">
+                        </div>
+                        Signal Level:
+                        <div class="progress" style="height: 20px;">
+                            <div class="progress-bar progress-bar-striped bg-info" id="RssiLevel" aria-valuemin="0"
+                                aria-valuemax="100"></div>
+                        </div>
+                        <p></p>
+                        <div class="input-group mb-3">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text" id="locfreq_value"> Local Freq</span>
+                            </div>
+                            <input type="text" class="form-control" placeholder="MHz." aria-label="LoFreq" aria-describedby="locfreq_value" id="LocFreq">
+                        </div>
+
+                        <div class="input-group mb-3">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text" id="tracfreq_value">Tracking Freq.</span>
+                            </div>
+                            <input type="text" class="form-control" placeholder="MHz." aria-label="TrackFreq" aria-describedby="tracfreq_value" id="TracFreq">
+                        </div>
+                    </div>
+                </div>
+
+
+
+                <div class="card text-black bg-light mb-3" style="max-width: 100%">
+                    <b>
+                        <div class="card-header bg-primary text-black">GPS status</div>
+                    </b>
+                    <div class="card-body">
+                        <div class="input-group mb-3">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text">GPS Latitude</span>
+                            </div>
+                            <input type="text" class="form-control" placeholder="" aria-label="gps_lat" aria-describedby="gps_lat" id="GpsLat">
+                        </div>
+
+                        <div class="input-group mb-3">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text" id="gps_long">GPS Longtitude</span>
+                            </div>
+                            <input type="text" class="form-control" placeholder="" aria-label="gps_lon" aria-describedby="gps_lon" id="GpsLon">
+                        </div>
+
+                        <div class="input-group mb-3">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text" id="heading">Heading</span>
+                            </div>
+                            <input type="text" class="form-control" placeholder="degree" aria-label="degree" aria-describedby="heading" id="CurrentHeading">
+                        </div>
+
+                        <div class="input-group mb-3">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text" id="Bow">Bow</span>
+                            </div>
+                            <input type="text" class="form-control" placeholder="degree" aria-label="bow" aria-describedby="bow" id="CurrentBow">
+                        </div>
+
+                    </div>
+                </div>
+
+                <div class="card text-black bg-light mb-3" style="max-width: 100%">
+                    <b>
+                        <div class="card-header bg-primary text-black">Antenna Angle</div>
+                    </b>
+                    <div class="card-body">
+
+                        <div class="input-group mb-3">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text" id="az_val">AZ </span>
+                            </div>
+                            <input type="text" class="form-control" placeholder="degree" aria-label="az_val" aria-describedby="az" 
+                            id="az">
+                        </div>
+
+                        <div class="input-group mb-3">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text" id="el_val">EL </span>
+                            </div>
+                            <input type="text" class="form-control" placeholder="degree" aria-label="el_val" aria-describedby="el" 
+                            id="el">
+                        </div>
+
+                        <div class="input-group mb-3">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text" id="pol_val">POL</span>
+                            </div>
+                            <input type="text" class="form-control" placeholder="degree" aria-label="pol_val" aria-describedby="pol" 
+                            id="pol">
+                        </div>
+
+                    </div>
+                </div>
+
+                <div class="card text-black bg-light mb-3" style="max-width: 100%">
+                    <b>
+                        <div class="card-header bg-primary text-black">Power</div>
+                    </b>
+                    <div class="card-body">
+
+                        <div class="input-group mb-3">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text" id="VoltIn_val">Voltage IN (V) </span>
+                            </div>
+                            <input type="text" class="form-control" placeholder="voltage" aria-label="VoltIn_val" aria-describedby="VoltIn_val"
+                            id="VoltIn">
+                        </div>
+
+                        <div class="input-group mb-3">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text" id="VoltLnb_val">Voltage LNB (V) </span>
+                            </div>
+                            <input type="text" class="form-control" placeholder="voltage" aria-label="VoltLnb_val" aria-describedby="VoltLnb_val"
+                            id="VoltLnb">
+                        </div>
+
+                        <div class="input-group mb-3">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text" id="VoltAnt_val">Voltage Vsat (V)</span>
+                            </div>
+                            <input type="text" class="form-control" placeholder="degree" aria-label="VoltAnt_val" aria-describedby="VoltAnt_val"
+                            id="VoltAnt">
+                        </div>
+
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <script language="JavaScript">
+        document.getElementById("BucStatus").checked = false;
+        document.getElementById("ModemStatus").checked = false;
+        document.getElementById("LnbStatus").checked = false;
+        
+       
+        $(document).ready(function () {
+            console.log("ready!");
+            
+            
+            $.ajax({
+                url: "/requestdata",
+                method: "GET"
+            }).done(function (data) {
+                console.log(data);
+                CurrentAntStatus(data.AntStatus);
+                CurrentSysStatus(data.SysStatus);
+                document.getElementById("SatName").value = CheckSatName(data.SatName);
+                document.getElementById("LocFreq").value = data.LocFreq;
+                document.getElementById("TracFreq").value = data.TracFreq;
+                RssiLevel(data.Rssi);
+                document.getElementById("GpsLat").value = GpsCalc(data.GpsLat);
+                document.getElementById("GpsLon").value = GpsCalc(data.GpsLon);
+                document.getElementById("CurrentHeading").value = HeadingCalc(data.Head);
+                document.getElementById("CurrentBow").value = BowCalc(data.Bow);
+                document.getElementById("az").value = AngleCalc(data.AzDeg);
+                document.getElementById("el").value = AngleCalc(data.ElDeg);
+                document.getElementById("pol").value = AngleCalc(data.PolDeg);
+                document.getElementById("VoltIn").value = PowerCalc(data.VoltIn);
+                document.getElementById("VoltLnb").value = PowerCalc(data.VoltLnb);
+                document.getElementById("VoltAnt").value = PowerCalc(data.VoltAnt);
+                //console.log(data.satellite_name);
+            }).fail(function () {
+                console.log("ajax fail");
+            });
+            
+        });
+        function CheckSatName(SatName){
+            var realSatName = SatName.split(".");
+            var SatNameCap  = realSatName[0].toUpperCase();
+            return SatNameCap;
+        }
+        function CurrentSysStatus(SysStatus){
+            console.log("SYSSTATUS:",SysStatus)
+            if (SysStatus == "1"){
+                return document.getElementById("ModemStatus").checked = true;
+            }else if (SysStatus == "2"){
+                return document.getElementById("LnbStatus").checked = true;
+            }else if (SysStatus == "3"){
+                return [document.getElementById("LnbStatus").checked = true, 
+                        document.getElementById("ModemStatus").checked = true];
+            }else if (SysStatus == "4"){
+                return document.getElementById("BucStatus").checked = true;
+            }else if (SysStatus == "5"){
+                return [document.getElementById("BucStatus").checked = true, 
+                        document.getElementById("ModemStatus").checked = true];
+            }else if (SysStatus == "6"){
+                return [document.getElementById("LnbStatus").checked = true, 
+                        document.getElementById("BucStatus").checked = true];
+            }else if (SysStatus == "7"){
+                return [document.getElementById("LnbStatus").checked = true, 
+                        document.getElementById("ModemStatus").checked = true,
+                        document.getElementById("BucStatus").checked = true];
+            }else{
+                console.log("SysStatus is error");
+            }
+        }
+        function CurrentAntStatus(AntStatus){
+            if (AntStatus == "1"){
+                return document.getElementById("AntInitialize").checked = true;
+            }else if(AntStatus == "2"){
+                return document.getElementById("AntSearching").checked = true;
+            }else if(AntStatus == "3"){
+                return document.getElementById("AntTracking").checked = true;
+            }else if(AntStatus == "4"){
+                return document.getElementById("AntBlockage").checked = true;
+            }else{
+                console.log("AntStatus is Error");
+            }
+        }
+        function RssiLevel(Rssi){
+            var elem = document.getElementById("RssiLevel");
+            Rssi_val = parseInt(Rssi);
+            if(Rssi_val){
+                $('#RssiLevel').append(Rssi_val);
+                elem.style.width = Rssi_val + '%';
+            }else{
+                Rssi_val = 0;
+                $('#RssiLevel').append(Rssi_val);
+                elem.style.width = Rssi_val + '%';
+            }
+        }
+        function GpsCalc(gps){
+            gps_val = parseInt(gps)/1000000.0;
+            return gps_val;
+        }
+
+        function HeadingCalc(head){
+            head_val = parseInt(head)/10.0;
+            return head_val;
+        }
+        function BowCalc(bow){
+            bow_val = parseInt(bow)/10.0;
+            return bow_val;
+        }
+        function AngleCalc(angle){
+            angle_val = parseInt(angle)/10.0;
+            return angle_val;
+        }
+        function PowerCalc(power){
+            power_val = parseInt(power)/10.0;
+            return power_val;
+        }
+
+    </script>
+</body>
+
+</html>

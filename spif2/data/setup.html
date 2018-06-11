@@ -1,0 +1,486 @@
+<!doctype html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" HTTP-EQUIV=”refresh”>
+  <link rel="stylesheet" href="static/bootstrap.css" />
+  <script src="static/jquery.js"></script>
+  <script src="static/popper.js"></script>
+  <script src="static/bootstrap.js"></script>
+
+  <title>Antenna Setting</title>
+  <style>
+    p.uppercase {
+      text-transform: uppercase;
+    }
+
+    p.lowercase {
+      text-transform: lowercase;
+    }
+
+    p.capitalize {
+      text-transform: capitalize;
+    }
+  </style>
+
+</head>
+
+<body>
+  <nav class="navbar navbar-expand-lg navbar-light bg-success">
+    <a class="navbar-brand" href="./info.html">THAICOM</a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
+      aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav mr-auto">
+        <li class="nav-item">
+          <a class="nav-link" href="./info.html">Antenna Info</a>
+        </li>
+        <li class="nav-item active">
+          <a class="nav-link" href="#">Settings
+            <span class="sr-only">(current)</span>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="./networking.html">Networking</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="./log.html">Logs</a>
+        </li>
+
+      </ul>
+    </div>
+  </nav>
+
+
+  <div class="container">
+    <h1>Antenna Settings</h1>
+    <div class="card text-black bg-light mb-3" tyle="max-width: 100%">
+      <b>
+        <div class="card-header bg-info text-white">SETTINGS</div>
+      </b>
+      <div class="card-body">
+
+        <div class="card text-black bg-light mb-3" style="max-width: 100%">
+          <b>
+            <div class="card-header bg-primary text-black">Heading </div>
+          </b>
+          <div class="card-body">
+            <form id="set_heading">
+              <div class="form-group row">
+                <div class="col-4">Heading:</div>
+                <div class="col-4">
+                  <input type="text" class="form-control " id="current_heading" disabled>
+                </div>
+                <div class="col-4">
+                  <input type="number" class="form-control" id="heading">
+                </div>
+              </div>
+              <div class="form-group row">
+                <div class="col-4">Bow:</div>
+                <div class="col-4">
+                  <input type="text" class="form-control " id="current_bow" disabled>
+                </div>
+                <div class="col-4">
+                  <input type="number" class="form-control" id="bow">
+                </div>
+              </div>
+              <div class="form-group row">
+                <div class="col-8"></div>
+                <div class="col-4">
+                  <button type="submit" class="btn btn-primary">SET</button>
+                </div>
+              </div>
+            </form>
+          </div>
+        </div>
+
+
+        <div class="card text-black bg-light mb-3" style="max-width: 100%">
+          <b>
+            <div class="card-header bg-primary text-black"> Tracking </div>
+          </b>
+          <div class="card-body">
+            <form id="set_satellite">
+
+              <div class="form-group row">
+                <label for="sat_select" class="col-5 col-form-label">Satellite:</label>
+                <div id="tableDiv" class="dropdown col-7">
+                  <button id="SatButton" class="btn btn-info dropdown-toggle" type="button" data-toggle="dropdown">
+                    Select Satellite
+                    <span class="caret"></span>
+                  </button>
+                  <div id="sat_select" class="dropdown-menu">
+                    <a class="dropdown-item" href="#" data-value="1">THAICOM 4</a>
+                    <a class="dropdown-item" href="#" data-value="2">THAICOM 5</a>
+                    <a class="dropdown-item" href="#" data-value="3">THAICOM 6</a>
+                  </div>
+                </div>
+              </div>
+              <div class="form-group row">
+                <label for="inputSatLocation" class="col-5 col-form-label">Satellite Location:</label>
+                <div class="col-4">
+                  <input type="text" class="form-control" id="satellite_location" value="">
+                  <input type="hidden" id="satellite_id" value="">
+                  <input type="hidden" id="satellite_name" value="">
+                </div>
+              </div>
+              <div class="form-group row">
+                <label for="inputLNBLO" class="col-5 col-form-label">Local LNB Freq.(MHz):</label>
+                <div class="col-4">
+                  <input type="text" class="form-control" id="lnb_lo">
+                </div>
+              </div>
+              <div class="form-group row">
+                <label for="inputLNBPower" class="col-5 col-form-label">LNB Tone :</label>
+                <div class="custom-control custom-radio ">
+                  <input type="radio" id="LNB_TONE_LOW" name="customRadio" class="custom-control-input" value='0'>
+                  <label class="custom-control-label" for="LNB_TONE_LOW">0 kHz</label>
+                </div>
+                <div class="custom-control custom-radio ">
+                  <input type="radio" id="LNB_TONE_HIGH" name="customRadio" class="custom-control-input" value='22'>
+                  <label class="custom-control-label" for="LNB_TONE_HIGH">22 kHz</label>
+                </div>
+              </div>
+
+              <div class="form-group row">
+                <label for="rxpol_select" class="col-5 col-form-label">Rx Pol:</label>
+                <div id="tableDiv2" class="dropdown col-7">
+                  <button id="RxButton" class="btn btn-info dropdown-toggle" type="button" data-toggle="dropdown">
+                    Rx Polarization
+                    <span class="caret"></span>
+                  </button>
+                  <div id="rxpol_select" class="dropdown-menu">
+                    <a class="dropdown-item" href="#" data-value="0" value="0">Horizontal</a>
+                    <a class="dropdown-item" href="#" data-value="1" value="1">Vertical</a>
+                  </div>
+                </div>
+              </div>
+
+              <div class="form-group row">
+                <label for="txpol_select" class="col-5 col-form-label">Tx Pol:</label>
+                <div id="tableDiv3" class="dropdown col-7">
+                  <button id="TxButton" class="btn btn-info dropdown-toggle" type="button" data-toggle="dropdown">
+                    Tx Polarization
+                    <span class="caret"></span>
+                  </button>
+                  <div id="txpol_select" class="dropdown-menu">
+                    <a class="dropdown-item" href="#" data-value="0" value="0">Horizontal</a>
+                    <a class="dropdown-item" href="#" data-value="1" value="1">Vertical</a>
+                  </div>
+                </div>
+              </div>
+
+              
+              <div class="form-group row">
+                <label for="inputDVBFreq" class="col-5 col-form-label">DVB Frequency (MHz):</label>
+                <div class="col-4">
+                  <input type="number" class="form-control" id="dvb_freq">
+                </div>
+                <div class="col-1"></div>
+              </div>
+              <div class="form-group row">
+                <label for="inputSatSymbol" class="col-5 col-form-label">Symbol rate(ksps):</label>
+                <div class="col-4">
+                  <input type="number" class="form-control" id="symbol_rate">
+                </div>
+                <div class="col-1"></div>
+              </div>
+              <div class="form-group row">
+                <label for="inputSatNID" class="col-5 col-form-label">NID:</label>
+                <div class="col-4">
+                  <input type="number" class="form-control" id="nid">
+                </div>
+                <div class="col-1"></div>
+              </div>
+              <div class="form-group row">
+                <div class="col-7"></div>
+                <button type="button" class="btn btn-success">Import</button>
+                <button type="button" class="btn btn-warning">Export</button>
+                <button type="submit" class="btn btn-primary">SET</button>
+            </form>
+            </div>
+          </div>
+        </div>
+
+
+        <div class="card text-black bg-light mb-3" style="max-width: 100%">
+          <b>
+            <div class="card-header bg-primary text-black">Antenna angle </div>
+          </b>
+          <div class="card-body">
+            <form id="set_angle">
+              <div class="form-group row">
+                <div class="col-4">AZ:</div>
+                <div class="col-4">
+                  <input type="text" class="form-control " id="current_az" disabled>
+                </div>
+                <div class="col-4">
+                  <input type="number" class="form-control" id="adjust_az">
+                </div>
+              </div>
+              <div class="form-group row">
+                <div class="col-4">EL:</div>
+                <div class="col-4">
+                  <input type="text" class="form-control " id="current_el" disabled>
+                </div>
+                <div class="col-4">
+                  <input type="number" class="form-control" id="adjust_el">
+                </div>
+              </div>
+
+              <div class="form-group row">
+                <div class="col-4">AZ:</div>
+                <div class="col-4">
+                  <input type="text" class="form-control " id="current_pol" disabled>
+                </div>
+                <div class="col-4">
+                  <input type="number" class="form-control" id="adjust_pol">
+                </div>
+              </div>
+              <div class="form-group row">
+                <div class="col-8"></div>
+                <div class="col-4">
+                  <button type="submit" class="btn btn-primary">SET</button>
+                </div>
+            </form>
+            </div>
+          </div>
+        </div>
+
+        <!-- New card: SUPPLY -->
+        <div class="card text-black bg-light mb-3" style="max-width: 100%">
+          <b>
+            <div class="card-header bg-primary text-black"> SUPPLY </div>
+          </b>
+          <div class="card-body">
+            <form id="set_supply">
+              <div class="form-group row">
+                <label for="VsatVolt" class="col-4 col-form-label">VSAT Voltage:</label>
+                <div class="col-2">
+                  <input type="text" class="form-control " id="current_el" disabled>
+                </div>
+                <div id="tableDiv2" class="dropdown col-6">
+                  <button id="VsatVoltButton" class="btn btn-info dropdown-toggle" type="button" data-toggle="dropdown">
+                    Select Voltage
+                    <span class="caret"></span>
+                  </button>
+                  <div id="VsatVolt" class="dropdown-menu">
+                    <a class="dropdown-item" href="#" data-value="1">12V</a>
+                    <a class="dropdown-item" href="#" data-value="2">24V</a>
+                    <a class="dropdown-item" href="#" data-value="3">36V</a>
+                    <a class="dropdown-item" href="#" data-value="4">48V</a>
+                  </div>
+                </div>
+              </div>
+              <div class="form-group row">
+                <div class="col-8"></div>
+                <button type="submit" class="btn btn-primary">SET</button>
+              </div>
+            </form>
+
+          </div>
+        </div>
+
+      </div>
+
+
+      <script language="JavaScript">
+        //console.log("ready!");
+        //GetSetupData();
+         $(document).ready(function () {
+          
+           console.log("ready!");
+           GetSetupData();
+           $("#SatButton").html('Current parameter');
+         });
+         
+            
+        $("#VsatVolt a").click(function(e){
+          e.preventDefault();
+          var data1 = $(this).text();
+          $("#VsatVoltButton").text(data1);
+          var volt_select = $(this).attr('data-value');
+          console.log(volt_select);
+        });
+        $("#rxpol_select a").click(function(e){
+          e.preventDefault();
+          var data1 = $(this).text();
+          $("#RxButton").text(data1);
+          var rxpol_select = $(this).attr('data-value');
+          console.log("rxpol select:",rxpol_select);
+        });
+
+        $("#txpol_select a").click(function(e){
+          e.preventDefault();
+          var data1 = $(this).text();
+          $("#TxButton").text(data1);
+          var txpol_select = $(this).attr('data-value');
+          console.log("txpol select:",txpol_select);
+        });
+
+        $("#sat_select a").click(function(e){
+          e.preventDefault(); // cancel the link behaviour
+          var selText = $(this).text();
+          console.log(selText);
+          $("#SatButton").text(selText);
+          var sat_select = $(this).attr('data-value');
+          console.log(sat_select);
+          var data1 = {"topic":"sat_select","sat_id":sat_select};
+         
+          $.ajax({
+              url: "/setup.html",
+              method: "POST",
+              data: JSON.stringify(data1),
+              contentType: 'application/json; charset=utf-8'  
+            }).done(function(sat_info) {
+              console.log("ajax done");
+              console.log(sat_info);
+              var sat_id = sat_info.satellite_id;
+              var sat_name = sat_info.satellite_name;
+              var sat_loc = sat_info.satellite_location;
+              var lnb_lo = sat_info.local_frequency;
+              var lnb_tone = sat_info.lnb_tone
+              var rx_pol = sat_info.rx_pol;
+              var tx_pol = sat_info.tx_pol;
+              var dvb_freq = sat_info.dvb_freq;
+              var symbol_rate = sat_info.symbol_rate;
+              var nid      = sat_info.nid;
+              console.log(nid);
+              document.getElementById("satellite_id").value = sat_id;
+              document.getElementById("satellite_name").value = sat_name;
+              document.getElementById("satellite_location").value = sat_loc;
+              document.getElementById("lnb_lo").value = lnb_lo;
+              document.getElementById("rxpol_select").value = rx_pol;
+              $("#RxButton").text(FirstCap(rx_pol));
+              document.getElementById("txpol_select").value = tx_pol;
+              $("#TxButton").text(FirstCap(tx_pol));
+              document.getElementById("dvb_freq").value = dvb_freq;
+              document.getElementById("symbol_rate").value = symbol_rate;
+              document.getElementById("nid").value = nid;
+              if (lnb_tone == 0){
+                var tone =0;
+                $('#LNB_TONE_LOW').click();
+                document.getElementById("LNB_TONE_LOW").value = tone;
+              }else{
+                $('#LNB_TONE_HIGH').click();
+                var tone = 22;
+                document.getElementById("LNB_TONE_HIGH").value = tone;
+              }
+            }).fail(function() {
+              console.log("ajax fail");
+            });
+          
+          
+          // Perform other work here ...
+          
+          // Set another completion function for the request above
+         
+        });
+    
+        
+      $( "#set_heading" ).submit(function( event ) {
+        event.preventDefault();
+        var heading_val = $("#heading").val();
+        var bow_val = $("#bow").val();
+        var heading_json={"topic":"set_heading","data":{"heading": heading_val,"bow":bow_val}};
+        $.ajax({
+        url: "/setup.html",
+        method: "POST",
+        data: JSON.stringify(heading_json),
+        contentType: 'application/json; charset=utf-8'  
+        }).done(function() {
+        console.log("ajax done");
+        }).fail(function() {
+        console.log("ajax fail");
+        });
+      });
+
+      $("#set_satellite").submit(function ( event) {
+        event.preventDefault();
+        if($('#LNB_TONE_HIGH ').is(":checked")){
+          var lnb_tone_val = "22";
+        }else{
+          var lnb_tone_val = "0";
+        }
+        var sat_id_val = $("#satellite_id").val();
+        var sat_name_val = $("#satellite_name").val();
+        var sat_location_val = $("#satellite_location").val();
+        
+        var lnb_lo_val = $("#lnb_lo").val();
+        var rxpol_val = $("#RxButton").text().toLowerCase();
+        var txpol_val = $("#TxButton").text().toLowerCase();
+        console.log("rxpol_val2:",rxpol_val);
+        console.log("txpol_val2:",txpol_val);
+        var dvb_freq_val = $("#dvb_freq").val();
+        var symbol_val = $("#symbol_rate").val();
+        var nid_val = $("#nid").val();
+        var satellite_json = {"topic":"set_satellite","data":{"satellite_id":sat_id_val,"satellite_name":sat_name_val,"satellite_location":sat_location_val,"local_frequency":lnb_lo_val,"lnb_tone":lnb_tone_val,"rx_pol":rxpol_val,"tx_pol":txpol_val,"dvb_freq":dvb_freq_val,"symbol_rate":symbol_val,"nid":nid_val}};
+        console.log(satellite_json);
+        $.ajax({
+          url: "/setup.html",
+          method: "POST",
+          data: JSON.stringify(satellite_json),
+          contentType: 'application/json; charset=utf-8'  
+        }).done(function() {
+          console.log("ajax done");
+        }).fail(function() {
+          console.log("ajax fail");
+        });
+      });
+    function FirstCap(string) 
+    {
+      return string.charAt(0).toUpperCase() + string.slice(1);    
+    }
+    
+    function GetSetupData(){
+      console.log("REQUEST");
+      $.ajax({
+          url: "/requestdatasetup",
+          method: "GET"
+      }).done(function (sat_info) {
+          
+          console.log(sat_info);
+          var sat_id = sat_info.satellite_id;
+          var sat_name = sat_info.satellite_name;
+          var sat_loc = sat_info.satellite_location;
+          var lnb_lo = sat_info.local_frequency;
+          var lnb_tone = sat_info.lnb_tone
+          var rx_pol = sat_info.rx_pol;
+          var tx_pol = sat_info.tx_pol;
+          var dvb_freq = sat_info.dvb_freq;
+          var symbol_rate = sat_info.symbol_rate;
+          var nid      = sat_info.nid;
+          console.log(nid);
+          document.getElementById("satellite_id").value = sat_id;
+          document.getElementById("satellite_name").value = sat_name;
+          document.getElementById("satellite_location").value = sat_loc;
+          document.getElementById("lnb_lo").value = lnb_lo;
+          document.getElementById("rxpol_select").value = rx_pol;
+          $("#RxButton").text(FirstCap(rx_pol));
+          document.getElementById("txpol_select").value = tx_pol;
+          $("#TxButton").text(FirstCap(tx_pol));
+          document.getElementById("dvb_freq").value = dvb_freq;
+          document.getElementById("symbol_rate").value = symbol_rate;
+          document.getElementById("nid").value = nid;
+          if (lnb_tone == 0){
+            var tone =0;
+            $('#LNB_TONE_LOW').click();
+            document.getElementById("LNB_TONE_LOW").value = tone;
+          }else{
+            $('#LNB_TONE_HIGH').click();
+            var tone = 22;
+            document.getElementById("LNB_TONE_HIGH").value = tone;
+          }
+          $("#SatButton").html('Current Parameter');
+      }).fail(function() {
+              console.log("ajax fail");
+              $("#SatButton").html('Select Satellite');
+      });
+    }
+  </script>
+</body>
+
+</html>
