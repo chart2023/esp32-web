@@ -13,39 +13,17 @@ HardwareSerial Serial1(2);
 //const char* ssid     = "ESP32";
 //const char* password = "812345679";
 
-char ssid_sta[] = "Pinetwork";
-char password_sta[] = "Ch@rt2o23";
+//char ssid_sta[] = "Pinetwork";
+//char password_sta[] = "Ch@rt2o23";
 
 //char ssid_sta[]     = "IOD-GNOC";
 //char password_sta[] = "1p5t@r99";
 
-//char ssid_sta[] = "Tenda1";     //  your network SSID (name)
-//char password_sta[] = "812345679";  // your network password
+char ssid_sta[] = "Tenda1";     //  your network SSID (name)
+char password_sta[] = "812345679";  // your network password
 
 
 struct SerialData {
-    /*  
-    char magic[1];
-    char SBit[1];
-    char KBit[1];
-    char CrcBit[1];
-    char AntStatus[1];
-    char SysStatus[1];
-    char SatName[20];
-    char Rssi[5];
-    char LocFreq[5];
-    char TracFreq[5];
-    char GpsLat[9];
-    char GpsLong[9];
-    char Head[4];
-    char Bow[4];
-    char AzDeg[4];
-    char ElDeg[4];
-    char PolDeg[4];
-    char VoltIn[4];
-    char VoltAnt[4]; 
-    char VoltLnb[4];
-    */
     String magic, SBit, KBit, CrcBit, AntStatus, SysStatus, SatName, Rssi, LocFreq, TracFreq, GpsLat, GpsLon, Head, Bow, AzDeg;
     String ElDeg, PolDeg, VoltIn, VoltAnt, VoltLnb, EndBit;
     int Heading;
@@ -175,7 +153,7 @@ void handleData(){
       
       if(msg == '[' or START_FLAG == 1){
         data_buff += msg;
-        Serial.println(data_buff);
+        //Serial.println(data_buff);
         START_FLAG = 1;
         timeout = 0;
         if (msg == ']'){
@@ -238,34 +216,39 @@ void handleData(){
   root["VoltIn"] = serialdata.VoltIn;
   root["VoltAnt"] = serialdata.VoltAnt;
   root["VoltLnb"] = serialdata.VoltLnb;
-
   String msg;
   root.printTo(msg);
- 
-  
-  
   server.sendHeader("Cache-Control", "no-cache");
   server.send(200,"application/json",msg);  
   return;
 }
 void handleSetup() {
   String msg;
+  String StartBit = "[";
+  String StopBit = "]";
+  String KBit;
   if (server.hasHeader("Cookie")) {
     Serial.print("Found cookie: ");
     String cookie = server.header("Cookie");
     Serial.println(cookie);
     if ( cookie == "ESPSESSIONID=1") {
       Serial.println("Logged in Successful123");
-      //handleDataSetup();
       if (server.hasArg("plain")){
         String data = server.arg("plain");
         Serial.println(data);
         StaticJsonBuffer<800> jBuffer;
         JsonObject& jObject = jBuffer.parseObject(data);
         if (jObject["topic"] == "set_heading"){
-          writeFile(SPIFFS, "/conf/heading.conf",jObject["data"]);
-          String value2 = jObject["data"]["heading"];
-          readFile(SPIFFS, "/conf/heading.conf");
+          int heading = jObject["data"]["heading"];
+          Serial.println(heading);
+          int bowofs = jObject["data"]["bow"];
+          Serial.println(bowofs);
+          KBit = "2";
+          Serial1.print(StartBit);
+          Serial1.print(KBit);
+          Serial1.printf("%04d", heading);
+          Serial1.printf("%04d", bowofs);
+          Serial1.print(StopBit);
         }else if (jObject["topic"] == "sat_select"){
           String sat_id = jObject["sat_id"];
           if (sat_id == "1"){
@@ -286,6 +269,17 @@ void handleSetup() {
             String value2 = jObject["data"]["satellite_name"];
             Serial.println("value2");
             readFile(SPIFFS, "/conf/satellite.conf");
+        }else if(jObject["topic"] == "set_angle"){
+          int az = jObject["data"]["az"];
+          int el = jObject["data"]["el"];
+          int pol = jObject["data"]["pol"];
+          KBit = "4";
+          Serial1.print(StartBit);
+          Serial1.print(KBit);
+          Serial1.printf("%04d", az);
+          Serial1.printf("%04d", el);
+          Serial1.printf("%04d", pol);
+          Serial1.print(StopBit);
         }else{
             Serial.println("faileddddd");
         }
@@ -412,7 +406,7 @@ void handleRoot() {
   if (!is_authentified()) {
     server.sendHeader("Location", "/info.html");
     server.sendHeader("Cache-Control", "no-cache");
-    server.send(301);
+    //server.send(301);
     return;
   }
 }

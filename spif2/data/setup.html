@@ -72,19 +72,19 @@
               <div class="form-group row">
                 <div class="col-4">Heading:</div>
                 <div class="col-4">
-                  <input type="text" class="form-control " id="current_heading" disabled>
+                  <input type="text" class="form-control " id="CurrentHeading" disabled>
                 </div>
                 <div class="col-4">
-                  <input type="number" class="form-control" id="heading">
+                  <input type="number" step="0.1"  min="0" max = "360" class="form-control" id="heading">
                 </div>
               </div>
               <div class="form-group row">
                 <div class="col-4">Bow:</div>
                 <div class="col-4">
-                  <input type="text" class="form-control " id="current_bow" disabled>
+                  <input type="text" class="form-control " id="CurrentBow" disabled>
                 </div>
                 <div class="col-4">
-                  <input type="number" class="form-control" id="bow">
+                  <input type="number" step="0.1"  min="0" max = "360" class="form-control" id="bow">
                 </div>
               </div>
               <div class="form-group row">
@@ -215,29 +215,29 @@
               <div class="form-group row">
                 <div class="col-4">AZ:</div>
                 <div class="col-4">
-                  <input type="text" class="form-control " id="current_az" disabled>
+                  <input type="text" class="form-control " id="CurrentAz" disabled>
                 </div>
                 <div class="col-4">
-                  <input type="number" class="form-control" id="adjust_az">
+                  <input type="number" step="0.1"  min="0" max = "360" class="form-control" id="adjust_az">
                 </div>
               </div>
               <div class="form-group row">
                 <div class="col-4">EL:</div>
                 <div class="col-4">
-                  <input type="text" class="form-control " id="current_el" disabled>
+                  <input type="text" class="form-control " id="CurrentEl" disabled>
                 </div>
                 <div class="col-4">
-                  <input type="number" class="form-control" id="adjust_el">
+                  <input type="number" step="0.1"  min="0" max = "360" class="form-control" id="adjust_el">
                 </div>
               </div>
 
               <div class="form-group row">
-                <div class="col-4">AZ:</div>
+                <div class="col-4">Polarization:</div>
                 <div class="col-4">
-                  <input type="text" class="form-control " id="current_pol" disabled>
+                  <input type="text" class="form-control " id="CurrentPol" disabled>
                 </div>
                 <div class="col-4">
-                  <input type="number" class="form-control" id="adjust_pol">
+                  <input type="number" step="0.1"  min="0" max = "360" class="form-control" id="adjust_pol">
                 </div>
               </div>
               <div class="form-group row">
@@ -256,11 +256,11 @@
             <div class="card-header bg-primary text-black"> SUPPLY </div>
           </b>
           <div class="card-body">
-            <form id="set_supply">
+            <form id="set_voltage">
               <div class="form-group row">
-                <label for="VsatVolt" class="col-4 col-form-label">VSAT Voltage:</label>
+                <label for="VsatVolt" class="col-4 col-form-label">VSAT Voltage (V):</label>
                 <div class="col-2">
-                  <input type="text" class="form-control " id="current_el" disabled>
+                  <input type="text" class="form-control " id="CurrentVoltIn" disabled>
                 </div>
                 <div id="tableDiv2" class="dropdown col-6">
                   <button id="VsatVoltButton" class="btn btn-info dropdown-toggle" type="button" data-toggle="dropdown">
@@ -268,10 +268,10 @@
                     <span class="caret"></span>
                   </button>
                   <div id="VsatVolt" class="dropdown-menu">
-                    <a class="dropdown-item" href="#" data-value="1">12V</a>
-                    <a class="dropdown-item" href="#" data-value="2">24V</a>
-                    <a class="dropdown-item" href="#" data-value="3">36V</a>
-                    <a class="dropdown-item" href="#" data-value="4">48V</a>
+                    <a class="dropdown-item" href="#" data-value="1">12</a>
+                    <a class="dropdown-item" href="#" data-value="2">24</a>
+                    <a class="dropdown-item" href="#" data-value="3">36</a>
+                    <a class="dropdown-item" href="#" data-value="4">48</a>
                   </div>
                 </div>
               </div>
@@ -288,11 +288,9 @@
 
 
       <script language="JavaScript">
-        //console.log("ready!");
-        //GetSetupData();
          $(document).ready(function () {
-          
            console.log("ready!");
+           RequestData();
            GetSetupData();
            $("#SatButton").html('Current parameter');
          });
@@ -329,7 +327,6 @@
           var sat_select = $(this).attr('data-value');
           console.log(sat_select);
           var data1 = {"topic":"sat_select","sat_id":sat_select};
-         
           $.ajax({
               url: "/setup.html",
               method: "POST",
@@ -372,24 +369,54 @@
             }).fail(function() {
               console.log("ajax fail");
             });
-          
-          
-          // Perform other work here ...
-          
-          // Set another completion function for the request above
-         
         });
     
         
       $( "#set_heading" ).submit(function( event ) {
         event.preventDefault();
-        var heading_val = $("#heading").val();
-        var bow_val = $("#bow").val();
+        var heading_val = CheckNullvalue(parseFloat($("#heading").val()) * 10);
+        var bow_val = CheckNullvalue(parseFloat($("#bow").val()) * 10);
         var heading_json={"topic":"set_heading","data":{"heading": heading_val,"bow":bow_val}};
+        console.log(heading_json);
         $.ajax({
         url: "/setup.html",
         method: "POST",
         data: JSON.stringify(heading_json),
+        contentType: 'application/json; charset=utf-8'  
+        }).done(function() {
+        console.log("ajax done");
+        }).fail(function() {
+        console.log("ajax fail");
+        });
+      });
+
+      $( "#set_angle" ).submit(function( event ) {
+        event.preventDefault();
+        var az_val = CheckNullvalue(parseFloat($("#adjust_az").val()) * 10);
+        var el_val = CheckNullvalue(parseFloat($("#adjust_el").val()) * 10);
+        var pol_val = CheckNullvalue(parseFloat($("#adjust_pol").val()) * 10);
+        var angle_json={"topic":"set_angle","data":{"az": az_val,"el":el_val, "pol":pol_val}};
+        console.log(angle_json);
+        $.ajax({
+        url: "/setup.html",
+        method: "POST",
+        data: JSON.stringify(angle_json),
+        contentType: 'application/json; charset=utf-8'  
+        }).done(function() {
+        console.log("ajax done");
+        }).fail(function() {
+        console.log("ajax fail");
+        });
+      });
+
+      $( "#set_voltage" ).submit(function( event ) {
+        event.preventDefault();
+        var vsatvolt_val = $("#VsatVoltButton").text();
+        var voltage_json={"topic":"set_voltage","data":{"VsatVolt": vsatvolt_val}};
+        $.ajax({
+        url: "/setup.html",
+        method: "POST",
+        data: JSON.stringify(voltage_json),
         contentType: 'application/json; charset=utf-8'  
         }).done(function() {
         console.log("ajax done");
@@ -408,7 +435,6 @@
         var sat_id_val = $("#satellite_id").val();
         var sat_name_val = $("#satellite_name").val();
         var sat_location_val = $("#satellite_location").val();
-        
         var lnb_lo_val = $("#lnb_lo").val();
         var rxpol_val = $("#RxButton").text().toLowerCase();
         var txpol_val = $("#TxButton").text().toLowerCase();
@@ -434,7 +460,13 @@
     {
       return string.charAt(0).toUpperCase() + string.slice(1);    
     }
-    
+    function CheckNullvalue(intval){
+      if (isNaN(intval)){
+        intval = 9999;
+      }
+      return intval;
+      
+    }
     function GetSetupData(){
       console.log("REQUEST");
       $.ajax({
@@ -479,6 +511,44 @@
               console.log("ajax fail");
               $("#SatButton").html('Select Satellite');
       });
+    }
+    function RequestData(){
+      console.log("ready!");
+      $.ajax({
+          url: "/requestdata",
+          method: "GET"
+      }).done(function (data) {
+          console.log(data);
+          document.getElementById("CurrentHeading").value = HeadingCalc(data.Head);
+          document.getElementById("CurrentBow").value = BowCalc(data.Bow);
+          document.getElementById("CurrentAz").value = AngleCalc(data.AzDeg);
+          document.getElementById("CurrentEl").value = AngleCalc(data.ElDeg);
+          document.getElementById("CurrentPol").value = AngleCalc(data.PolDeg);
+          document.getElementById("CurrentVoltIn").value = PowerCalc(data.VoltIn);
+      }).fail(function () {
+          console.log("ajax fail");
+      });
+    }
+    function GpsCalc(gps){
+            gps_val = parseInt(gps)/1000000.0;
+            return gps_val;
+        }
+
+    function HeadingCalc(head){
+        head_val = parseInt(head)/10.0;
+        return head_val;
+    }
+    function BowCalc(bow){
+        bow_val = parseInt(bow)/10.0;
+        return bow_val;
+    }
+    function AngleCalc(angle){
+        angle_val = parseInt(angle)/10.0;
+        return angle_val;
+    }
+    function PowerCalc(power){
+        power_val = parseInt(power)/10.0;
+        return power_val;
     }
   </script>
 </body>
