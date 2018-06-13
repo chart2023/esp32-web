@@ -139,26 +139,24 @@ void handleInfo() {
 void handleData(){
   SerialData serialdata;
   String data_buff;
-  int START_FLAG = 0;
+  int startflag = 0;
   int timeout = 0;
+  int datalength;
   Serial.println("handle data");
   //Request data
   Serial1.print("[Q1]");
   while (timeout < 15){
-    Serial.print("TIMEOUT:");
-    Serial.println(timeout);
-    if(Serial1.available() > 0 and START_FLAG < 2){
+    //Serial.print("TimeOut:");
+    //Serial.println(timeout);
+    if(Serial1.available() > 0 and startflag < 2 and data_buff.length() < 90){
       char msg = Serial1.read();
-      Serial.println(msg);
-      
-      if(msg == '[' or START_FLAG == 1){
+      if(msg == '[' or startflag == 1){
         data_buff += msg;
-        //Serial.println(data_buff);
-        START_FLAG = 1;
+        startflag = 1;
         timeout = 0;
-        if (msg == ']'){
-          data_buff += msg;
-          START_FLAG = 2;
+        if (msg == ']' and data_buff.length() == 89){
+          Serial.println(data_buff.length());
+          startflag = 2;
           timeout = 15;
           Serial.println("END");
         }
@@ -170,6 +168,8 @@ void handleData(){
         Serial1.print("[Q1]");
       }
     }else{
+        Serial.print("dataLength:");
+        Serial.println(data_buff.length());
         data_buff = "";
         timeout = timeout + 1 ;
         delay(4000);
@@ -178,6 +178,8 @@ void handleData(){
     }
   }
   Serial.println("FINISHEDDDD");
+  Serial.print("Final dataLength:");
+  Serial.println(data_buff.length());
   serialdata.magic = data_buff.substring(0,1);
   serialdata.SBit = data_buff.substring(1,2);
   serialdata.KBit = data_buff.substring(2,3);
@@ -263,12 +265,31 @@ void handleSetup() {
             String sat_info = readFile2(SPIFFS, "/profile/thaicom6.cfg");
             Serial.println(sat_info);
             server.send(200,"application/json",sat_info);
+          }else if (sat_id == "4"){
+            String sat_info = readFile2(SPIFFS, "/profile/thaicom8.cfg");
+            Serial.println(sat_info);
+            server.send(200,"application/json",sat_info);
           }
         }else if(jObject["topic"] == "set_satellite"){
             writeFile(SPIFFS, "/conf/satellite.conf",jObject["data"]);
-            String value2 = jObject["data"]["satellite_name"];
-            Serial.println("value2");
-            readFile(SPIFFS, "/conf/satellite.conf");
+            int sateliite_id = jObject["data"]["sateliite_id"];
+            String satellite_name = jObject["data"]["satellite_name"];
+            String satellite_location = jObject["data"]["satellite_location"];
+            int local_frequecy = jObject["data"]["local_frequency"];
+            int lnb_tone = jObject["data"]["lnb_tone"];
+            int rx_pol = jObject["data"]["rx_pol"];
+            int tx_pol = jObject["data"]["tx_pol"];
+            int modem_freq = jObject["data"]["modem_freq"];
+            int symbol_rate = jObject["data"]["symbol_rate"];
+            String nid = jObject["data"]["nid"];
+            KBit = "3";
+            Serial1.print(StartBit);
+            Serial1.print(KBit);
+            Serial1.printf("%08d", modem_freq);
+            Serial1.printf("%06d", modem_freq);
+            Serial1.print(padding_string(satellite_name,20));
+            Serial1.print(StopBit);
+
         }else if(jObject["topic"] == "set_angle"){
           int az = jObject["data"]["az"];
           int el = jObject["data"]["el"];
@@ -279,6 +300,13 @@ void handleSetup() {
           Serial1.printf("%04d", az);
           Serial1.printf("%04d", el);
           Serial1.printf("%04d", pol);
+          Serial1.print(StopBit);
+        }else if(jObject["topic"] == "set_voltage"){
+          int vsatvolt = jObject["data"]["VsatVolt"];
+          KBit = "5";
+          Serial1.print(StartBit);
+          Serial1.print(KBit);
+          Serial1.printf("%02d", vsatvolt);
           Serial1.print(StopBit);
         }else{
             Serial.println("faileddddd");
@@ -343,16 +371,7 @@ void handleSetup() {
 
 
 void GetData(){
-  /*
-  String data_buff;
-  //Serial.print("DATA:");
-  if (Serial1.available() > 0){
-    char msg = Serial1.read();
-    Serial.print(msg);
-  }else{
   
-  }
-  */
   if (server.hasHeader("Cookie")) {
     Serial.print("Found cookie: ");
     String cookie = server.header("Cookie");
@@ -380,23 +399,7 @@ void handleDataSetup(){
           server.send(200,"application/json",sat_info);
         }
     }
-  /*  
-    String path = "/setup.html";
-    String contentType = getContentType(path);
-    if (SPIFFS.exists(path)) {
-      File file = SPIFFS.open(path, "r");
-      size_t sent = server.streamFile(file, contentType);
-      file.close();
-      return;
-    }
-  }
   
-  Serial.println("CHECK DATA");
-  String sat_info = readFile2(SPIFFS, "/conf/satellite.conf");
-  if(sat_info != NULL){
-    server.send(200,"application/json",sat_info);
-  }
-  */
   }
 }
 //root page can be accessed only if authentification is ok
@@ -404,7 +407,7 @@ void handleRoot() {
   Serial.println("Enter handleRoot");
   String header;
   if (!is_authentified()) {
-    server.sendHeader("Location", "/info.html");
+    server.sendHeader("Location", "/info");
     server.sendHeader("Cache-Control", "no-cache");
     //server.send(301);
     return;
@@ -517,7 +520,7 @@ void writeFile(fs::FS &fs, const char * path, String message) {
 
 bool handleFileRead(String path) {
   Serial.println("handleFileRead: " + path);
-  if (path.endsWith("/")) path += "antenna_info.html";
+  if (path.endsWith("/")) path += "info.html";
   String contentType = getContentType(path);
   //String sat_info="aaaa";
   //server.send(200,"text/plain",sat_info);
@@ -531,11 +534,17 @@ bool handleFileRead(String path) {
   Serial.println("\File not found");
   return false;
 }
+String padding_string(String str,int str_length){
+  int num_length = str_length - str.length();
+  for(int i = 0; i < num_length ; i++){
+    str += '.';
+  }
+  return str;
+}
 
 void setup() {
   Serial.begin(115200);
-  Serial1.begin(115200);
-  //Serial1.print("COM5 555555");
+  Serial1.begin(115200); 
   /*
   //ACCESS POINT MODE
     WiFi.mode(WIFI_AP);
@@ -574,8 +583,8 @@ void setup() {
   server.on("/requestdata",handleData);
   server.on("/requestdatasetup",handleDataSetup);
   server.on("/", handleRoot);
-  server.on("/info.html", handleInfo);
-  server.on("/setup.html", handleSetup);
+  server.on("/info", handleInfo);
+  server.on("/setup", handleSetup);
   server.on("/login", handleLogin);
   server.on("/inline", []() {
     server.send(200, "text/plain", "this works without need of authentification");
@@ -586,7 +595,7 @@ void setup() {
   server.collectHeaders(headerkeys, headerkeyssize);
   server.begin();
   Serial.println("HTTP server started");
-  
+   
   
 }
 

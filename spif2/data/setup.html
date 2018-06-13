@@ -28,7 +28,7 @@
 
 <body>
   <nav class="navbar navbar-expand-lg navbar-light bg-success">
-    <a class="navbar-brand" href="./info.html">THAICOM</a>
+    <a class="navbar-brand" href="./info">THAICOM</a>
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
       aria-expanded="false" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
@@ -36,7 +36,7 @@
     <div class="collapse navbar-collapse" id="navbarSupportedContent">
       <ul class="navbar-nav mr-auto">
         <li class="nav-item">
-          <a class="nav-link" href="./info.html">Antenna Info</a>
+          <a class="nav-link" href="./info">Antenna Info</a>
         </li>
         <li class="nav-item active">
           <a class="nav-link" href="#">Settings
@@ -116,6 +116,7 @@
                     <a class="dropdown-item" href="#" data-value="1">THAICOM 4</a>
                     <a class="dropdown-item" href="#" data-value="2">THAICOM 5</a>
                     <a class="dropdown-item" href="#" data-value="3">THAICOM 6</a>
+                    <a class="dropdown-item" href="#" data-value="4">THAICOM 8</a>
                   </div>
                 </div>
               </div>
@@ -173,25 +174,36 @@
                 </div>
               </div>
 
-              
               <div class="form-group row">
-                <label for="inputDVBFreq" class="col-5 col-form-label">DVB Frequency (MHz):</label>
+                <label for="inputModem" class="col-5 col-form-label">Modem :</label>
+                <div class="custom-control custom-radio ">
+                  <input type="radio" id="DVBmode" name="modem_mode" class="custom-control-input" value='dvb'>
+                  <label class="custom-control-label" for="DVBmode">DVB   </label>
+                </div>
+                <div class="custom-control custom-radio ">
+                  <input type="radio" id="SCPCmode" name="modem_mode" class="custom-control-input" value='scpc'>
+                  <label class="custom-control-label" for="SCPCmode">SCPC</label>
+                </div>
+              </div>
+
+              <div class="form-group row">
+                <label for="inputDVBFreq" class="col-5 col-form-label">Frequency (kHz):</label>
                 <div class="col-4">
-                  <input type="number" class="form-control" id="dvb_freq">
+                  <input type="number" step="0.001" class="form-control" id="modem_freq">
                 </div>
                 <div class="col-1"></div>
               </div>
               <div class="form-group row">
                 <label for="inputSatSymbol" class="col-5 col-form-label">Symbol rate(ksps):</label>
                 <div class="col-4">
-                  <input type="number" class="form-control" id="symbol_rate">
+                  <input type="number" step="0.001" class="form-control" id="symbol_rate">
                 </div>
                 <div class="col-1"></div>
               </div>
               <div class="form-group row">
                 <label for="inputSatNID" class="col-5 col-form-label">NID:</label>
                 <div class="col-4">
-                  <input type="number" class="form-control" id="nid">
+                  <input type="text" class="form-control" id="nid">
                 </div>
                 <div class="col-1"></div>
               </div>
@@ -292,7 +304,7 @@
            console.log("ready!");
            RequestData();
            GetSetupData();
-           $("#SatButton").html('Current parameter');
+          //  $("#SatButton").html('Current parameter');
          });
          
             
@@ -328,7 +340,7 @@
           console.log(sat_select);
           var data1 = {"topic":"sat_select","sat_id":sat_select};
           $.ajax({
-              url: "/setup.html",
+              url: "/setup",
               method: "POST",
               data: JSON.stringify(data1),
               contentType: 'application/json; charset=utf-8'  
@@ -342,7 +354,8 @@
               var lnb_tone = sat_info.lnb_tone
               var rx_pol = sat_info.rx_pol;
               var tx_pol = sat_info.tx_pol;
-              var dvb_freq = sat_info.dvb_freq;
+              var modem = sat_info.modem;
+              var modem_freq = sat_info.modem_freq;
               var symbol_rate = sat_info.symbol_rate;
               var nid      = sat_info.nid;
               console.log(nid);
@@ -354,7 +367,7 @@
               $("#RxButton").text(FirstCap(rx_pol));
               document.getElementById("txpol_select").value = tx_pol;
               $("#TxButton").text(FirstCap(tx_pol));
-              document.getElementById("dvb_freq").value = dvb_freq;
+              document.getElementById("modem_freq").value = modem_freq;
               document.getElementById("symbol_rate").value = symbol_rate;
               document.getElementById("nid").value = nid;
               if (lnb_tone == 0){
@@ -365,6 +378,15 @@
                 $('#LNB_TONE_HIGH').click();
                 var tone = 22;
                 document.getElementById("LNB_TONE_HIGH").value = tone;
+              }
+              if(modem == "DVB"){
+                var modem_mode = "dvb";
+                $('#DVBmode').click();
+                document.getElementById("DVBmode").value = modem_mode;
+              }else{
+                var modem_mode = "scpc";
+                $('#SCPCmode').click();
+                document.getElementById("SCPCmode").value = modem_mode; 
               }
             }).fail(function() {
               console.log("ajax fail");
@@ -379,7 +401,7 @@
         var heading_json={"topic":"set_heading","data":{"heading": heading_val,"bow":bow_val}};
         console.log(heading_json);
         $.ajax({
-        url: "/setup.html",
+        url: "/setup",
         method: "POST",
         data: JSON.stringify(heading_json),
         contentType: 'application/json; charset=utf-8'  
@@ -398,7 +420,7 @@
         var angle_json={"topic":"set_angle","data":{"az": az_val,"el":el_val, "pol":pol_val}};
         console.log(angle_json);
         $.ajax({
-        url: "/setup.html",
+        url: "/setup",
         method: "POST",
         data: JSON.stringify(angle_json),
         contentType: 'application/json; charset=utf-8'  
@@ -414,7 +436,7 @@
         var vsatvolt_val = $("#VsatVoltButton").text();
         var voltage_json={"topic":"set_voltage","data":{"VsatVolt": vsatvolt_val}};
         $.ajax({
-        url: "/setup.html",
+        url: "/setup",
         method: "POST",
         data: JSON.stringify(voltage_json),
         contentType: 'application/json; charset=utf-8'  
@@ -427,10 +449,15 @@
 
       $("#set_satellite").submit(function ( event) {
         event.preventDefault();
-        if($('#LNB_TONE_HIGH ').is(":checked")){
+        if($('#LNB_TONE_HIGH').is(":checked")){
           var lnb_tone_val = "22";
         }else{
           var lnb_tone_val = "0";
+        }
+        if($('#DVBmode').is(":checked")){
+          var modem_val = "DVB";
+        }else{
+          var modem_val = "SCPC";
         }
         var sat_id_val = $("#satellite_id").val();
         var sat_name_val = $("#satellite_name").val();
@@ -440,13 +467,13 @@
         var txpol_val = $("#TxButton").text().toLowerCase();
         console.log("rxpol_val2:",rxpol_val);
         console.log("txpol_val2:",txpol_val);
-        var dvb_freq_val = $("#dvb_freq").val();
+        var modem_freq_val = $("#modem_freq").val();
         var symbol_val = $("#symbol_rate").val();
         var nid_val = $("#nid").val();
-        var satellite_json = {"topic":"set_satellite","data":{"satellite_id":sat_id_val,"satellite_name":sat_name_val,"satellite_location":sat_location_val,"local_frequency":lnb_lo_val,"lnb_tone":lnb_tone_val,"rx_pol":rxpol_val,"tx_pol":txpol_val,"dvb_freq":dvb_freq_val,"symbol_rate":symbol_val,"nid":nid_val}};
+        var satellite_json = {"topic":"set_satellite","data":{"satellite_id":sat_id_val,"satellite_name":sat_name_val,"satellite_location":sat_location_val,"local_frequency":lnb_lo_val,"lnb_tone":lnb_tone_val,"rx_pol":rxpol_val,"tx_pol":txpol_val,"modem":modem_val, "modem_freq":modem_freq_val,"symbol_rate":symbol_val,"nid":nid_val}};
         console.log(satellite_json);
         $.ajax({
-          url: "/setup.html",
+          url: "/setup",
           method: "POST",
           data: JSON.stringify(satellite_json),
           contentType: 'application/json; charset=utf-8'  
@@ -473,7 +500,6 @@
           url: "/requestdatasetup",
           method: "GET"
       }).done(function (sat_info) {
-          
           console.log(sat_info);
           var sat_id = sat_info.satellite_id;
           var sat_name = sat_info.satellite_name;
@@ -482,7 +508,8 @@
           var lnb_tone = sat_info.lnb_tone
           var rx_pol = sat_info.rx_pol;
           var tx_pol = sat_info.tx_pol;
-          var dvb_freq = sat_info.dvb_freq;
+          var modem = sat_info.modem;
+          var modem_freq = sat_info.modem_freq;
           var symbol_rate = sat_info.symbol_rate;
           var nid      = sat_info.nid;
           console.log(nid);
@@ -494,7 +521,7 @@
           $("#RxButton").text(FirstCap(rx_pol));
           document.getElementById("txpol_select").value = tx_pol;
           $("#TxButton").text(FirstCap(tx_pol));
-          document.getElementById("dvb_freq").value = dvb_freq;
+          document.getElementById("modem_freq").value = modem_freq;
           document.getElementById("symbol_rate").value = symbol_rate;
           document.getElementById("nid").value = nid;
           if (lnb_tone == 0){
@@ -502,11 +529,20 @@
             $('#LNB_TONE_LOW').click();
             document.getElementById("LNB_TONE_LOW").value = tone;
           }else{
-            $('#LNB_TONE_HIGH').click();
             var tone = 22;
+            $('#LNB_TONE_HIGH').click();
             document.getElementById("LNB_TONE_HIGH").value = tone;
           }
-          $("#SatButton").html('Current Parameter');
+          if (modem == "DVB"){
+            var modem_mode = "dvb";
+            $('#DVBmode').click();
+            document.getElementById("DVBmode").value = modem_mode;
+          }else{
+            var modem_mode = "scpc";
+            $('#SCPCmode').click();
+            document.getElementById("SCPCmode").value = modem_mode;
+          }
+          $("#SatButton").html("Current: "+sat_name.toUpperCase());
       }).fail(function() {
               console.log("ajax fail");
               $("#SatButton").html('Select Satellite');
