@@ -542,16 +542,36 @@ String padding_string(String str,int str_length){
   return str;
 }
 
+void satloct_convert(String str){
+  int str_length = str.length();
+  char buff[str_length-1];
+  char direction_name = str.charAt(str_length-1);
+  String direction1;
+  if (direction_name == 'E'){
+    direction1 = "+";
+  }else if (direction_name == 'W'){
+    direction1 = "-";
+  }
+  String loct = str.substring(0,str_length-1);
+  int loct1 = loct.toFloat() * 10;
+  sprintf(buff, "%04d",loct1);
+  direction1 += buff;
+  Serial.println(direction1);
+  // return loct2;
+}
 void setup() {
   Serial.begin(115200);
   Serial1.begin(115200); 
+  String str = "19E";
+  satloct_convert(str);
+  Serial.println("END");
   /*
   //ACCESS POINT MODE
     WiFi.mode(WIFI_AP);
     WiFi.softAP(ssid, password);
     Serial.print("IP address: ");
     Serial.println(WiFi.softAPIP());
-  */
+  
   Serial.print("Connecting to ");
   Serial.println(ssid_sta);
   WiFi.disconnect();
@@ -595,7 +615,7 @@ void setup() {
   server.collectHeaders(headerkeys, headerkeyssize);
   server.begin();
   Serial.println("HTTP server started");
-   
+   */
   
 }
 
