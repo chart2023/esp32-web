@@ -16,11 +16,11 @@ HardwareSerial Serial1(2);
 //char ssid_sta[] = "Pinetwork";
 //char password_sta[] = "Ch@rt2o23";
 
-//char ssid_sta[]     = "IOD-GNOC";
-//char password_sta[] = "1p5t@r99";
+char ssid_sta[]     = "IOD-GNOC";
+char password_sta[] = "1p5t@r99";
 
-char ssid_sta[] = "Tenda1";     //  your network SSID (name)
-char password_sta[] = "812345679";  // your network password
+//char ssid_sta[] = "Tenda1";     //  your network SSID (name)
+//char password_sta[] = "812345679";  // your network password
 
 
 struct SerialData {
@@ -102,8 +102,6 @@ void handleLogin() {
         file.close();
         return;
       }
-      //server.send(301);
-      //return;
     }
     msg = "Wrong username/password! try again.";
     Serial.println("Log in Failed");
@@ -118,18 +116,14 @@ void handleLogin() {
   }
   Serial.println("\File not found");
   return;
-  //handleFileRead(server.uri())
-  
 }
 void handleInfo() {
-  
   String path = "/info.html";
   String contentType = getContentType(path);
   if (SPIFFS.exists(path)) {
     Serial.println("DONE1");
     File file = SPIFFS.open(path, "r");
     size_t sent = server.streamFile(file, contentType);
-    
     file.close();
     Serial.println("DONE2");
     return;
@@ -163,7 +157,7 @@ void handleData(){
       }else{
         data_buff = "";
         timeout = timeout + 1 ;
-        delay(4000);
+        delay(1);
         Serial.println("NO DATA");
         Serial1.print("[Q1]");
       }
@@ -172,7 +166,7 @@ void handleData(){
         Serial.println(data_buff.length());
         data_buff = "";
         timeout = timeout + 1 ;
-        delay(4000);
+        delay(1);
         Serial.println("NO DATA");
         Serial1.print("[Q1]");
     }
@@ -271,25 +265,29 @@ void handleSetup() {
             server.send(200,"application/json",sat_info);
           }
         }else if(jObject["topic"] == "set_satellite"){
-            writeFile(SPIFFS, "/conf/satellite.conf",jObject["data"]);
-            int sateliite_id = jObject["data"]["sateliite_id"];
-            String satellite_name = jObject["data"]["satellite_name"];
-            String satellite_location = jObject["data"]["satellite_location"];
-            int local_frequecy = jObject["data"]["local_frequency"];
-            int lnb_tone = jObject["data"]["lnb_tone"];
-            int rx_pol = jObject["data"]["rx_pol"];
-            int tx_pol = jObject["data"]["tx_pol"];
-            int modem_freq = jObject["data"]["modem_freq"];
-            int symbol_rate = jObject["data"]["symbol_rate"];
-            String nid = jObject["data"]["nid"];
-            KBit = "3";
-            Serial1.print(StartBit);
-            Serial1.print(KBit);
-            Serial1.printf("%08d", modem_freq);
-            Serial1.printf("%06d", modem_freq);
-            Serial1.print(padding_string(satellite_name,20));
-            Serial1.print(StopBit);
-
+          writeFile(SPIFFS, "/conf/satellite.conf",jObject["data"]);
+          int sateliite_id = jObject["data"]["sateliite_id"];
+          String satellite_name = jObject["data"]["satellite_name"];
+          String satellite_location = jObject["data"]["satellite_location"];
+          int local_frequency = jObject["data"]["local_frequency"];
+          int lnb_tone = jObject["data"]["lnb_tone"];
+          int rx_pol = jObject["data"]["rx_pol"];
+          int tx_pol = jObject["data"]["tx_pol"];
+          int modem_freq = jObject["data"]["modem_freq"];
+          int symbol_rate = jObject["data"]["symbol_rate"];
+          String nid = jObject["data"]["nid"];
+          KBit = "3";
+          Serial1.print(StartBit);
+          Serial1.print(KBit);
+          Serial1.printf("%08d", modem_freq);
+          Serial1.printf("%06d", symbol_rate);
+          Serial1.print(padding_string(satellite_name,20));
+          Serial1.print(satloct_convert(satellite_location));
+          Serial1.printf("%05d", local_frequency);
+          Serial1.printf("%01d",rx_pol);
+          Serial1.printf("%01d",tx_pol);
+          Serial1.printf("%01d",lnb_tone);
+          Serial1.print(StopBit);
         }else if(jObject["topic"] == "set_angle"){
           int az = jObject["data"]["az"];
           int el = jObject["data"]["el"];
@@ -311,7 +309,6 @@ void handleSetup() {
         }else{
             Serial.println("faileddddd");
         }
-        
       }
       Serial.println("web completed1");
       server.sendHeader("Cache-Control", "no-cache");
@@ -371,7 +368,6 @@ void handleSetup() {
 
 
 void GetData(){
-  
   if (server.hasHeader("Cookie")) {
     Serial.print("Found cookie: ");
     String cookie = server.header("Cookie");
@@ -387,7 +383,6 @@ void GetData(){
 }
 
 void handleDataSetup(){
-  
   if (server.hasHeader("Cookie")) {
     Serial.print("Found cookie: ");
     String cookie = server.header("Cookie");
@@ -399,7 +394,6 @@ void handleDataSetup(){
           server.send(200,"application/json",sat_info);
         }
     }
-  
   }
 }
 //root page can be accessed only if authentification is ok
@@ -490,15 +484,12 @@ void readFile(fs::FS &fs, const char * path) {
 
 String readFile2(fs::FS &fs, const char * path) {
   Serial.printf("Reading file: %s\r\n", path);
-
   File filecfg = SPIFFS.open(path);
   if (!filecfg || filecfg.isDirectory()) {
     Serial.println("- failed to open file for reading");
     return "failed";
   }
-
   Serial.println("- read from file:");
-  
   String data = filecfg.readString();
   return data;
 }
@@ -542,36 +533,33 @@ String padding_string(String str,int str_length){
   return str;
 }
 
-void satloct_convert(String str){
+String satloct_convert(String str){
   int str_length = str.length();
-  char buff[str_length-1];
+  char buff[5];
   char direction_name = str.charAt(str_length-1);
-  String direction1;
+  String direction_str;
   if (direction_name == 'E'){
-    direction1 = "+";
+    direction_str = "+";
   }else if (direction_name == 'W'){
-    direction1 = "-";
+    direction_str = "-";
   }
   String loct = str.substring(0,str_length-1);
   int loct1 = loct.toFloat() * 10;
   sprintf(buff, "%04d",loct1);
-  direction1 += buff;
-  Serial.println(direction1);
-  // return loct2;
+  direction_str += buff;
+  //Serial.println(direction1);
+  return direction_str;
 }
 void setup() {
   Serial.begin(115200);
   Serial1.begin(115200); 
-  String str = "19E";
-  satloct_convert(str);
-  Serial.println("END");
   /*
   //ACCESS POINT MODE
     WiFi.mode(WIFI_AP);
     WiFi.softAP(ssid, password);
     Serial.print("IP address: ");
     Serial.println(WiFi.softAPIP());
-  
+  */
   Serial.print("Connecting to ");
   Serial.println(ssid_sta);
   WiFi.disconnect();
@@ -615,7 +603,7 @@ void setup() {
   server.collectHeaders(headerkeys, headerkeyssize);
   server.begin();
   Serial.println("HTTP server started");
-   */
+   
   
 }
 

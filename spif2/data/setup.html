@@ -292,10 +292,8 @@
                 <button type="submit" class="btn btn-primary">SET</button>
               </div>
             </form>
-
           </div>
         </div>
-
       </div>
 
 
@@ -304,10 +302,7 @@
            console.log("ready!");
            RequestData();
            GetSetupData();
-          //  $("#SatButton").html('Current parameter');
          });
-         
-            
         $("#VsatVolt a").click(function(e){
           e.preventDefault();
           var data1 = $(this).text();
@@ -340,57 +335,57 @@
           console.log(sat_select);
           var data1 = {"topic":"sat_select","sat_id":sat_select};
           $.ajax({
-              url: "/setup",
-              method: "POST",
-              data: JSON.stringify(data1),
-              contentType: 'application/json; charset=utf-8'  
-            }).done(function(sat_info) {
-              console.log("ajax done");
-              console.log(sat_info);
-              var sat_id = sat_info.satellite_id;
-              var sat_name = sat_info.satellite_name;
-              var sat_loc = sat_info.satellite_location;
-              var lnb_lo = sat_info.local_frequency;
-              var lnb_tone = sat_info.lnb_tone
-              var rx_pol = sat_info.rx_pol;
-              var tx_pol = sat_info.tx_pol;
-              var modem = sat_info.modem;
-              var modem_freq = sat_info.modem_freq;
-              var symbol_rate = sat_info.symbol_rate;
-              var nid      = sat_info.nid;
-              console.log(nid);
-              document.getElementById("satellite_id").value = sat_id;
-              document.getElementById("satellite_name").value = sat_name;
-              document.getElementById("satellite_location").value = sat_loc;
-              document.getElementById("lnb_lo").value = lnb_lo;
-              document.getElementById("rxpol_select").value = rx_pol;
-              $("#RxButton").text(FirstCap(rx_pol));
-              document.getElementById("txpol_select").value = tx_pol;
-              $("#TxButton").text(FirstCap(tx_pol));
-              document.getElementById("modem_freq").value = modem_freq;
-              document.getElementById("symbol_rate").value = symbol_rate;
-              document.getElementById("nid").value = nid;
-              if (lnb_tone == 0){
-                var tone =0;
-                $('#LNB_TONE_LOW').click();
-                document.getElementById("LNB_TONE_LOW").value = tone;
-              }else{
-                $('#LNB_TONE_HIGH').click();
-                var tone = 22;
-                document.getElementById("LNB_TONE_HIGH").value = tone;
-              }
-              if(modem == "DVB"){
-                var modem_mode = "dvb";
-                $('#DVBmode').click();
-                document.getElementById("DVBmode").value = modem_mode;
-              }else{
-                var modem_mode = "scpc";
-                $('#SCPCmode').click();
-                document.getElementById("SCPCmode").value = modem_mode; 
-              }
-            }).fail(function() {
-              console.log("ajax fail");
-            });
+            url: "/setup",
+            method: "POST",
+            data: JSON.stringify(data1),
+            contentType: 'application/json; charset=utf-8'  
+          }).done(function(sat_info) {
+            console.log("ajax done");
+            console.log(sat_info);
+            var sat_id = sat_info.satellite_id;
+            var sat_name = sat_info.satellite_name;
+            var sat_loc = sat_info.satellite_location;
+            var lnb_lo = sat_info.local_frequency;
+            var lnb_tone = sat_info.lnb_tone
+            var rx_pol = sat_info.rx_pol;
+            var tx_pol = sat_info.tx_pol;
+            var modem = sat_info.modem;
+            var modem_freq = sat_info.modem_freq;
+            var symbol_rate = sat_info.symbol_rate;
+            var nid      = sat_info.nid;
+            console.log(nid);
+            document.getElementById("satellite_id").value = sat_id;
+            document.getElementById("satellite_name").value = sat_name;
+            document.getElementById("satellite_location").value = sat_loc;
+            document.getElementById("lnb_lo").value = lnb_lo;
+            document.getElementById("rxpol_select").value = rx_pol;
+            $("#RxButton").text(FirstCap(rx_pol));
+            document.getElementById("txpol_select").value = tx_pol;
+            $("#TxButton").text(FirstCap(tx_pol));
+            document.getElementById("modem_freq").value = modem_freq;
+            document.getElementById("symbol_rate").value = symbol_rate;
+            document.getElementById("nid").value = nid;
+            if (lnb_tone == 0){
+              var tone =0;
+              $('#LNB_TONE_LOW').click();
+              document.getElementById("LNB_TONE_LOW").value = tone;
+            }else{
+              $('#LNB_TONE_HIGH').click();
+              var tone = 22;
+              document.getElementById("LNB_TONE_HIGH").value = tone;
+            }
+            if(modem == "DVB"){
+              var modem_mode = "dvb";
+              $('#DVBmode').click();
+              document.getElementById("DVBmode").value = modem_mode;
+            }else{
+              var modem_mode = "scpc";
+              $('#SCPCmode').click();
+              document.getElementById("SCPCmode").value = modem_mode; 
+            }
+          }).fail(function() {
+            console.log("ajax fail");
+          });
         });
     
         
@@ -492,7 +487,6 @@
         intval = 9999;
       }
       return intval;
-      
     }
     function GetSetupData(){
       console.log("REQUEST");
@@ -588,5 +582,4 @@
     }
   </script>
 </body>
-
 </html>

@@ -7,7 +7,6 @@
     <script src="static/jquery.js"></script>
     <script src="static/popper.js"></script>
     <script src="static/bootstrap.js"></script>
-    
     <title>Networking</title>
     <style>
         p.uppercase {
@@ -27,23 +26,23 @@
 
   <body>
       <nav class="navbar navbar-expand-lg navbar-light bg-success">
-          <a class="navbar-brand" href="./info.html">THAICOM</a>
+          <a class="navbar-brand" href="./info">THAICOM</a>
           <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
           </button>
           <div class="collapse navbar-collapse" id="navbarSupportedContent">
             <ul class="navbar-nav mr-auto">
               <li class="nav-item">
-                <a class="nav-link" href="./info.html">Antenna Info</a>
+                <a class="nav-link" href="./info">Antenna Info</a>
               </li>
               <li class="nav-item">
-                  <a class="nav-link" href="./setup.html">Settings</a>
+                  <a class="nav-link" href="./setup">Settings</a>
               </li>
               <li class="nav-item active">
                 <a class="nav-link" href="#">Networking<span class="sr-only">(current)</span></a>
               </li>
               <li class="nav-item">
-                  <a class="nav-link" href="./log.html">Logs</a>
+                  <a class="nav-link" href="./log">Logs</a>
               </li>
             </ul>
           </div>
@@ -55,79 +54,77 @@
           <div class="card text-black bg-light mb-3" tyle="max-width: 100%">
             <b><div class="card-header bg-info text-white" >IP Configuration</div></b>
               <div class="card-body">
-
-                
-                      <form id="set_heading">
+                      <form id="set_ipaddr">
                           <div class="form-group row">
                             <div class="col-2">IP Address :</div>
                             <div class="col-2">
-                                <input type="number" maxlength="3" max="255"  min="0" class="form-control" id="ip1">
+                                <input type="number" maxlength="3" max="255"  min="0" class="form-control" id="ip1" required>
                             </div>
                             <div>.</div>
                             <div class="col-2">
-                                <input type="number" maxlength="3" max="255"  min="0" class="form-control" id="ip2">
+                                <input type="number" maxlength="3" max="255"  min="0" class="form-control" id="ip2" required>
                             </div>
                             <div>.</div>
                             <div class="col-2">
-                                <input type="number" maxlength="3" max="255"  min="0" class="form-control " id="ip3">
+                                <input type="number" maxlength="3" max="255"  min="0" class="form-control " id="ip3" required>
                             </div>
                             <div>.</div>
                             <div class="col-2">
-                                <input type="number" maxlength="3" max="255"  min="0" class="form-control" id="ip4">
+                                <input type="number" maxlength="3" max="255"  min="0" class="form-control" id="ip4" required>
                             </div>
                           </div>
                           <div class="form-group row">
                               <div class="col-2">Subnet mask :</div>
                               <div class="col-2">
-                                  <input type="number" maxlength="3" max="255"  min="0" class="form-control" id="mask1">
+                                  <input type="number" maxlength="3" max="255"  min="0" class="form-control" id="mask1" required>
                               </div>
                               <div>.</div>
                               <div class="col-2">
-                                  <input type="number" maxlength="3" max="255"  min="0" class="form-control" id="mask2">
+                                  <input type="number" maxlength="3" max="255"  min="0" class="form-control" id="mask2" required>
                               </div>
                               <div>.</div>
                               <div class="col-2">
-                                  <input type="number" maxlength="3" max="255"  min="0" class="form-control " id="mask3">
+                                  <input type="number" maxlength="3" max="255"  min="0" class="form-control " id="mask3" required>
                               </div>
                               <div>.</div>
                               <div class="col-2">
-                                  <input type="number" maxlength="3" max="255"  min="0" class="form-control" id="mask4">
+                                  <input type="number" maxlength="3" max="255"  min="0" class="form-control" id="mask4" required>
                               </div>
                             </div>
                             <div class="form-group row">
                                 <div class="col-2">Gateway :</div>
                                 <div class="col-2">
-                                    <input type="number" maxlength="3" max="255"  min="0" class="form-control" id="gw1">
+                                    <input type="number" maxlength="3" max="255"  min="0" class="form-control" id="gw1" required>
                                 </div>
                                 <div>.</div>
                                 <div class="col-2">
-                                    <input type="number" maxlength="3" max="255"  min="0" class="form-control" id="gw2">
+                                    <input type="number" maxlength="3" max="255"  min="0" class="form-control" id="gw2" required>
                                 </div>
                                 <div>.</div>
                                 <div class="col-2">
-                                    <input type="number" maxlength="3" max="255"  min="0" class="form-control " id="gw3">
+                                    <input type="number" maxlength="3" max="255"  min="0" class="form-control " id="gw3" required>
                                 </div>
                                 <div>.</div>
                                 <div class="col-2">
-                                    <input type="number" maxlength="3" max="255"  min="0" class="form-control" id="gw4">
+                                    <input type="number" maxlength="3" max="255"  min="0" class="form-control" id="gw4" required>
                                 </div>
                               </div>
                               <div class="form-group row">
                                   <div class="col-2">DNS:</div>
                                   <div class="col-2">
-                                      <input type="number" maxlength="3" max="255"  min="0" class="form-control" id="dns1">
+                                      <input type="number" maxlength="3" max="255"  min="0" class="form-control" id="dns1" required>
                                   </div>
                                   <div>.</div>
                                   <div class="col-2">
-                                      <input type="number" maxlength="3" max="255"  min="0" class="form-control" id="dns2">
+                                      <input type="number" maxlength="3" max="255"  min="0" class="form-control" id="dns2" required>
                                   </div>
                                   <div>.</div>
                                   <div class="col-2">
-                                      <input type="number" maxlength="3" max="255"  min="0" class="form-control " id="dns3">
+                                      <input type="number" maxlength="3" max="255"  min="0" class="form-control " id="dns3" required>
                                   </div>
                                   <div>.</div>
                                   <div class="col-2">
-                                      <input type="number" maxlength="3" max="255"  min="0" class="form-control" id="dns4">
+                                      <input type="number" maxlength="3" max="255"  min="0" class="form-control" id="dns4" required>
                                   </div>
                                 </div>
                                 <div class="form-group row">
@@ -150,7 +147,47 @@
     
     
   <script language="JavaScript">
-    
+    $("#set_ipaddr").submit(function ( event) {
+        event.preventDefault();
+        var ip1_val = $("#ip1").val().padStart(3,"0");
+        var ip2_val = $("#ip2").val().padStart(3,"0");
+        var ip3_val = $("#ip3").val().padStart(3,"0");
+        var ip4_val = $("#ip4").val().padStart(3,"0");
+        var ip_val = ip1_val.concat(ip2_val).concat(ip3_val).concat(ip4_val);
+        var mask1_val = $("#mask1").val().padStart(3,"0");
+        var mask2_val = $("#mask2").val().padStart(3,"0");
+        var mask3_val = $("#mask3").val().padStart(3,"0");
+        var mask4_val = $("#mask4").val().padStart(3,"0");
+        var mask_val = mask1_val.concat(mask2_val).concat(mask3_val).concat(mask4_val);
+        var gw1_val = $("#gw1").val().padStart(3,"0");
+        var gw2_val = $("#gw2").val().padStart(3,"0");
+        var gw3_val = $("#gw3").val().padStart(3,"0");
+        var gw4_val = $("#gw4").val().padStart(3,"0");
+        var gw_val = gw1_val.concat(gw2_val).concat(gw3_val).concat(gw4_val);
+        var dns1_val = $("#dns1").val().padStart(3,"0");
+        var dns2_val = $("#dns2").val().padStart(3,"0");
+        var dns3_val = $("#dns3").val().padStart(3,"0");
+        var dns4_val = $("#dns4").val().padStart(3,"0");
+        var dns_val = dns1_val.concat(dns2_val).concat(dns3_val).concat(dns4_val);
+        var tcp_val = $("#tcpport").val().padStart(5,"0");
+        console.log(ip_val);
+        console.log(mask_val);
+        console.log(gw_val);
+        console.log(dns_val);
+        console.log(tcp_val);
+        var ipaddr_json = {"topic":"set_ipaddr","data":{"ipaddr": ip_val, "subnet": mask_val, "gateway":gw_val, "tcpport":tcp_val}};
+        console.log(ipaddr_json);
+        $.ajax({
+          url: "/setup",
+          method: "POST",
+          data: JSON.stringify(ipaddr_json),
+          contentType: 'application/json; charset=utf-8'  
+        }).done(function() {
+          console.log("ajax done");
+        }).fail(function() {
+          console.log("ajax fail");
+        });
+      });
 	
   </script>
   </body>
