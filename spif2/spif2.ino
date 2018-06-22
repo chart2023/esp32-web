@@ -26,20 +26,6 @@ char password_sta[] = "1p5t@r99";
 struct SerialData {
     String magic, SBit, KBit, CrcBit, AntStatus, SysStatus, SatName, Rssi, LocFreq, TracFreq, GpsLat, GpsLon, Head, Bow, AzDeg;
     String ElDeg, PolDeg, VoltIn, VoltAnt, VoltLnb, EndBit;
-    int Heading;
-    int BowOfs;
-    int DvbFreq;
-    int DvbSymb;
-    int SatLoct;
-    int SatFreq;
-    int RxPol;
-    int TxPol;
-    int Gen22K;
-    int SetAzDeg;
-    int SetElDeg;
-    int SetPolDeg;
-    int SetVoltIn;
-    int SetVoltAnt;
     String end_string;
 } __attribute__((packed));
 
@@ -60,7 +46,8 @@ bool is_authentified() {
   Serial.println("Authentification Failed");
   return false;
 }
-void handleLogin() {
+
+void handle_login() {
   String msg;
   if (server.hasHeader("Cookie")) {
     Serial.print("Found cookie login: ");
@@ -71,7 +58,7 @@ void handleLogin() {
       server.sendHeader("Cache-Control", "no-cache");
       server.sendHeader("Set-Cookie", "ESPSESSIONID=1");
       String path = "/setup.html";
-      String contentType = getContentType(path);
+      String contentType = get_content_type(path);
       if (SPIFFS.exists(path)) {
         File file = SPIFFS.open(path, "r");
         size_t sent = server.streamFile(file, contentType);
@@ -95,7 +82,7 @@ void handleLogin() {
       server.sendHeader("Cache-Control", "no-cache");
       server.sendHeader("Set-Cookie", "ESPSESSIONID=1");
       String path1 = "/setup.html";
-      String contentType = getContentType(path1);
+      String contentType = get_content_type(path1);
       if (SPIFFS.exists(path1)) {
         File file = SPIFFS.open(path1, "r");
         size_t sent = server.streamFile(file, contentType);
@@ -107,7 +94,7 @@ void handleLogin() {
     Serial.println("Log in Failed");
   }
   String path = "/login.html";
-  String contentType = getContentType(path);
+  String contentType = get_content_type(path);
   if (SPIFFS.exists(path)) {
     File file = SPIFFS.open(path, "r");
     size_t sent = server.streamFile(file, contentType);
@@ -117,20 +104,20 @@ void handleLogin() {
   Serial.println("\File not found");
   return;
 }
-void handleInfo() {
+
+void handle_info() {
   String path = "/info.html";
-  String contentType = getContentType(path);
+  String contentType = get_content_type(path);
   if (SPIFFS.exists(path)) {
     Serial.println("DONE1");
     File file = SPIFFS.open(path, "r");
     size_t sent = server.streamFile(file, contentType);
     file.close();
-    Serial.println("DONE2");
     return;
   }
 }
 
-void handleData(){
+void handle_data(){
   SerialData serialdata;
   String data_buff;
   int startflag = 0;
@@ -171,9 +158,9 @@ void handleData(){
         Serial1.print("[Q1]");
     }
   }
-  Serial.println("FINISHEDDDD");
-  Serial.print("Final dataLength:");
-  Serial.println(data_buff.length());
+  // Serial.println("FINISHEDDDD");
+  // Serial.print("Final dataLength:");
+  // Serial.println(data_buff.length());
   serialdata.magic = data_buff.substring(0,1);
   serialdata.SBit = data_buff.substring(1,2);
   serialdata.KBit = data_buff.substring(2,3);
@@ -218,7 +205,8 @@ void handleData(){
   server.send(200,"application/json",msg);  
   return;
 }
-void handleSetup() {
+
+void handle_setup() {
   String msg;
   String StartBit = "[";
   String StopBit = "]";
@@ -248,19 +236,19 @@ void handleSetup() {
         }else if (jObject["topic"] == "sat_select"){
           String sat_id = jObject["sat_id"];
           if (sat_id == "1"){
-            String sat_info = readFile2(SPIFFS, "/profile/thaicom4.cfg");
+            String sat_info = read_file_data(SPIFFS, "/profile/thaicom4.cfg");
             Serial.println(sat_info);
             server.send(200,"application/json",sat_info);
           }else if (sat_id == "2"){
-            String sat_info = readFile2(SPIFFS, "/profile/thaicom5.cfg");
+            String sat_info = read_file_data(SPIFFS, "/profile/thaicom5.cfg");
             Serial.println(sat_info);
             server.send(200,"application/json",sat_info);
           }else if (sat_id == "3"){
-            String sat_info = readFile2(SPIFFS, "/profile/thaicom6.cfg");
+            String sat_info = read_file_data(SPIFFS, "/profile/thaicom6.cfg");
             Serial.println(sat_info);
             server.send(200,"application/json",sat_info);
           }else if (sat_id == "4"){
-            String sat_info = readFile2(SPIFFS, "/profile/thaicom8.cfg");
+            String sat_info = read_file_data(SPIFFS, "/profile/thaicom8.cfg");
             Serial.println(sat_info);
             server.send(200,"application/json",sat_info);
           }
@@ -314,7 +302,7 @@ void handleSetup() {
       server.sendHeader("Cache-Control", "no-cache");
       server.sendHeader("Set-Cookie", "ESPSESSIONID=1");
       String path = "/setup.html";
-      String contentType = getContentType(path);
+      String contentType = get_content_type(path);
       if (SPIFFS.exists(path)) {
         File file = SPIFFS.open(path, "r");
         size_t sent = server.streamFile(file, contentType);
@@ -342,7 +330,7 @@ void handleSetup() {
         server.sendHeader("Cache-Control", "no-cache");
         server.sendHeader("Set-Cookie", "ESPSESSIONID=1");
         String path = "/setup.html";
-        String contentType = getContentType(path);
+        String contentType = get_content_type(path);
         if (SPIFFS.exists(path)) {
           File file = SPIFFS.open(path, "r");
           size_t sent = server.streamFile(file, contentType);
@@ -354,7 +342,7 @@ void handleSetup() {
       Serial.println("Log in Failed");
     }
     String path = "/login.html";
-    String contentType = getContentType(path);
+    String contentType = get_content_type(path);
     if (SPIFFS.exists(path)) {
       File file = SPIFFS.open(path, "r");
       size_t sent = server.streamFile(file, contentType);
@@ -367,14 +355,14 @@ void handleSetup() {
 }
 
 
-void GetData(){
+void get_data(){
   if (server.hasHeader("Cookie")) {
     Serial.print("Found cookie: ");
     String cookie = server.header("Cookie");
     Serial.println(cookie);
     if ( cookie == "ESPSESSIONID=1") {
         Serial.println("Logged in Successful123");
-        String sat_info = readFile2(SPIFFS, "/conf/satellite.conf");
+        String sat_info = read_file_data(SPIFFS, "/conf/satellite.conf");
         if(sat_info != NULL){
           server.send(200,"application/json",sat_info);
         }
@@ -382,14 +370,14 @@ void GetData(){
   }
 }
 
-void handleDataSetup(){
+void handle_data_setup(){
   if (server.hasHeader("Cookie")) {
     Serial.print("Found cookie: ");
     String cookie = server.header("Cookie");
     Serial.println(cookie);
     if ( cookie == "ESPSESSIONID=1") {
         Serial.println("Logged in Successful1234");
-        String sat_info = readFile2(SPIFFS, "/conf/satellite.conf");
+        String sat_info = read_file_data(SPIFFS, "/conf/satellite.conf");
         if(sat_info != NULL){
           server.send(200,"application/json",sat_info);
         }
@@ -397,18 +385,17 @@ void handleDataSetup(){
   }
 }
 //root page can be accessed only if authentification is ok
-void handleRoot() {
-  Serial.println("Enter handleRoot");
+void handle_root() {
+  Serial.println("Enter handle_root");
   String header;
   if (!is_authentified()) {
     server.sendHeader("Location", "/info");
     server.sendHeader("Cache-Control", "no-cache");
-    //server.send(301);
     return;
   }
 }
 
-void handleNotFound() {
+void handle_not_found() {
   String message = "File Not Found\n\n";
   message += "URI: ";
   message += server.uri();
@@ -423,7 +410,7 @@ void handleNotFound() {
   server.send(404, "text/plain", message);
 }
 
-String getContentType(String filename) {
+String get_content_type(String filename) {
   if (filename.endsWith(".htm")) return "text/html";
   else if (filename.endsWith(".html")) return "text/html";
   else if (filename.endsWith(".css")) return "text/css";
@@ -440,7 +427,7 @@ String getContentType(String filename) {
 }
 
 
-void listDir(fs::FS &fs, const char * dirname, uint8_t levels) {
+void list_dir(fs::FS &fs, const char * dirname, uint8_t levels) {
   Serial.printf("Listing directory: %s\r\n", dirname);
   File root = fs.open(dirname);
   if (!root) {
@@ -457,7 +444,7 @@ void listDir(fs::FS &fs, const char * dirname, uint8_t levels) {
       Serial.print("  DIR : ");
       Serial.println(file.name());
       if (levels) {
-        listDir(fs, file.name(), levels - 1);
+        list_dir(fs, file.name(), levels - 1);
       }
     } else {
       Serial.print("  FILE: ");
@@ -469,7 +456,7 @@ void listDir(fs::FS &fs, const char * dirname, uint8_t levels) {
   }
 }
 
-void readFile(fs::FS &fs, const char * path) {
+void read_file(fs::FS &fs, const char * path) {
   Serial.printf("Reading file: %s\r\n", path);
   File file = fs.open(path);
   if (!file || file.isDirectory()) {
@@ -482,7 +469,7 @@ void readFile(fs::FS &fs, const char * path) {
   }
 }
 
-String readFile2(fs::FS &fs, const char * path) {
+String read_file_data(fs::FS &fs, const char * path) {
   Serial.printf("Reading file: %s\r\n", path);
   File filecfg = SPIFFS.open(path);
   if (!filecfg || filecfg.isDirectory()) {
@@ -494,7 +481,7 @@ String readFile2(fs::FS &fs, const char * path) {
   return data;
 }
 
-void writeFile(fs::FS &fs, const char * path, String message) {
+void write_file(fs::FS &fs, const char * path, String message) {
   Serial.printf("Writing file: %s\r\n", path);
 
   File file = fs.open(path, FILE_WRITE);
@@ -509,10 +496,10 @@ void writeFile(fs::FS &fs, const char * path, String message) {
   }
 }
 
-bool handleFileRead(String path) {
+bool handle_file_read(String path) {
   Serial.println("handleFileRead: " + path);
   if (path.endsWith("/")) path += "info.html";
-  String contentType = getContentType(path);
+  String contentType = get_content_type(path);
   //String sat_info="aaaa";
   //server.send(200,"text/plain",sat_info);
   if (SPIFFS.exists(path)) {
@@ -581,19 +568,19 @@ void setup() {
     Serial.println("Card Mount Failed");
     return;
   }
-  listDir(SPIFFS, "/", 0);
+  list_dir(SPIFFS, "/", 0);
   Serial.println( "Test complete" );
 
   server.onNotFound([]() {
-    if (!handleFileRead(server.uri()))
+    if (!handle_file_read(server.uri()))
       server.send(404, "text/plain", "404: NOT FOUND");
   });
-  server.on("/requestdata",handleData);
-  server.on("/requestdatasetup",handleDataSetup);
-  server.on("/", handleRoot);
-  server.on("/info", handleInfo);
-  server.on("/setup", handleSetup);
-  server.on("/login", handleLogin);
+  server.on("/requestdata",handle_data);
+  server.on("/requestdatasetup",handle_data_setup);
+  server.on("/", handle_root);
+  server.on("/info", handle_info);
+  server.on("/setup", handle_setup);
+  server.on("/login", handle_login);
   server.on("/inline", []() {
     server.send(200, "text/plain", "this works without need of authentification");
   });
