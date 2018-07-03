@@ -16,11 +16,11 @@ HardwareSerial Serial1(2);
 //char ssid_sta[] = "Pinetwork";
 //char password_sta[] = "Ch@rt2o23";
 
-char ssid_sta[]     = "IOD-GNOC";
-char password_sta[] = "1p5t@r99";
+//char ssid_sta[]     = "IOD-GNOC";
+//char password_sta[] = "1p5t@r99";
 
-//char ssid_sta[] = "Tenda1";     //  your network SSID (name)
-//char password_sta[] = "812345679";  // your network password
+char ssid_sta[] = "Tenda1";     //  your network SSID (name)
+char password_sta[] = "812345679";  // your network password
 
 
 struct SerialData {
@@ -158,9 +158,6 @@ void handle_data(){
         Serial1.print("[Q1]");
     }
   }
-  // Serial.println("FINISHEDDDD");
-  // Serial.print("Final dataLength:");
-  // Serial.println(data_buff.length());
   serialdata.magic = data_buff.substring(0,1);
   serialdata.SBit = data_buff.substring(1,2);
   serialdata.KBit = data_buff.substring(2,3);
@@ -228,11 +225,19 @@ void handle_setup() {
           int bowofs = jObject["data"]["bow"];
           Serial.println(bowofs);
           KBit = "2";
-          Serial1.print(StartBit);
-          Serial1.print(KBit);
-          Serial1.printf("%04d", heading);
-          Serial1.printf("%04d", bowofs);
-          Serial1.print(StopBit);
+          // Serial1.print(StartBit);
+          // Serial1.print(KBit);
+          // Serial1.printf("%04d", heading);
+          // Serial1.printf("%04d", bowofs);
+          // Serial1.print(StopBit);
+          char heading_buff[4];
+          char bowofs_buff[4];
+          sprintf(heading_buff, "%04d",heading);
+          sprintf(bowofs_buff, "%04d",bowofs);
+          String msg_send = StartBit+KBit+heading_buff+bowofs_buff+StopBit;
+          Serial.print(msg_send);
+          serial_write_string(msg_send);
+          //Serial1.write(writeString(msg_send));
         }else if (jObject["topic"] == "sat_select"){
           String sat_id = jObject["sat_id"];
           if (sat_id == "1"){
@@ -253,7 +258,7 @@ void handle_setup() {
             server.send(200,"application/json",sat_info);
           }
         }else if(jObject["topic"] == "set_satellite"){
-          writeFile(SPIFFS, "/conf/satellite.conf",jObject["data"]);
+          write_file(SPIFFS, "/conf/satellite.conf",jObject["data"]);
           int sateliite_id = jObject["data"]["sateliite_id"];
           String satellite_name = jObject["data"]["satellite_name"];
           String satellite_location = jObject["data"]["satellite_location"];
@@ -265,17 +270,22 @@ void handle_setup() {
           int symbol_rate = jObject["data"]["symbol_rate"];
           String nid = jObject["data"]["nid"];
           KBit = "3";
-          Serial1.print(StartBit);
-          Serial1.print(KBit);
-          Serial1.printf("%08d", modem_freq);
-          Serial1.printf("%06d", symbol_rate);
-          Serial1.print(padding_string(satellite_name,20));
-          Serial1.print(satloct_convert(satellite_location));
-          Serial1.printf("%05d", local_frequency);
-          Serial1.printf("%01d",rx_pol);
-          Serial1.printf("%01d",tx_pol);
-          Serial1.printf("%01d",lnb_tone);
-          Serial1.print(StopBit);
+          char modem_freq_buff[8];
+          char symbol_rate_buff[6];
+          // Serial1.print(StartBit);
+          // Serial1.print(KBit);
+          // Serial1.printf("%08d", modem_freq);
+          // Serial1.printf("%06d", symbol_rate);
+          // Serial1.print(padding_string(satellite_name,20));
+          // Serial1.print(satloct_convert(satellite_location));
+          // Serial1.printf("%05d", local_frequency);
+          // Serial1.printf("%01d",rx_pol);
+          // Serial1.printf("%01d",tx_pol);
+          // Serial1.printf("%01d",lnb_tone);
+          // Serial1.print(StopBit);
+          sprintf(modem_freq_buff, "%08d", modem_freq);
+          sprintf(symbol_rate_buff, "%06d", symbol_rate);
+          String msg_send = StartBit + KBit 
         }else if(jObject["topic"] == "set_angle"){
           int az = jObject["data"]["az"];
           int el = jObject["data"]["el"];
@@ -519,7 +529,21 @@ String padding_string(String str,int str_length){
   }
   return str;
 }
+int crc_encoding(String str){
+  int crc ;
+  for( int i = 0; i < str.length(); i++){
+    crc = crc^str[i];
+  }
+  return crc;
+}
+void serial_write_string(String stringData) { 
 
+  for (int i = 0; i < stringData.length(); i++)
+  {
+    Serial1.write(stringData[i]);  
+  }
+
+}
 String satloct_convert(String str){
   int str_length = str.length();
   char buff[5];
