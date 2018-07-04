@@ -68,6 +68,7 @@
             <div class="card-header bg-primary text-black">Heading </div>
           </b>
           <div class="card-body">
+            
             <form id="set_heading">
               <div class="form-group row">
                 <div class="col-4">Heading:</div>
@@ -388,8 +389,9 @@
           });
         });
     
-        
+      
       $( "#set_heading" ).submit(function( event ) {
+       
         event.preventDefault();
         var heading_val = CheckNullvalue(parseFloat($("#heading").val()) * 10);
         var bow_val = CheckNullvalue(parseFloat($("#bow").val()) * 10);
@@ -404,6 +406,7 @@
         console.log("ajax done");
         }).fail(function() {
         console.log("ajax fail");
+        alert("dai");
         });
       });
 
@@ -481,6 +484,10 @@
     function FirstCap(string) 
     {
       return string.charAt(0).toUpperCase() + string.slice(1);    
+    }
+    function toggleAlert(){
+      $(".alert").toggleClass('in out'); 
+      return false; 
     }
     function CheckNullvalue(intval){
       if (isNaN(intval)){

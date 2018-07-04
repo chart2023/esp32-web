@@ -207,6 +207,7 @@ void handle_setup() {
   String msg;
   String StartBit = "[";
   String StopBit = "]";
+  String SBit = "W";
   String KBit;
   if (server.hasHeader("Cookie")) {
     Serial.print("Found cookie: ");
@@ -234,9 +235,11 @@ void handle_setup() {
           char bowofs_buff[4];
           sprintf(heading_buff, "%04d",heading);
           sprintf(bowofs_buff, "%04d",bowofs);
-          String msg_send = StartBit+KBit+heading_buff+bowofs_buff+StopBit;
+          int crc_value = crc_encoding(String(heading_buff)+String(bowofs_buff));
+          String msg_send = StartBit+SBit+KBit+heading_buff+bowofs_buff+crc_value+StopBit;
           Serial.print(msg_send);
           serial_write_string(msg_send);
+
           //Serial1.write(writeString(msg_send));
         }else if (jObject["topic"] == "sat_select"){
           String sat_id = jObject["sat_id"];
@@ -285,7 +288,7 @@ void handle_setup() {
           // Serial1.print(StopBit);
           sprintf(modem_freq_buff, "%08d", modem_freq);
           sprintf(symbol_rate_buff, "%06d", symbol_rate);
-          String msg_send = StartBit + KBit 
+          String msg_send = StartBit + KBit ;
         }else if(jObject["topic"] == "set_angle"){
           int az = jObject["data"]["az"];
           int el = jObject["data"]["el"];
@@ -535,6 +538,42 @@ int crc_encoding(String str){
     crc = crc^str[i];
   }
   return crc;
+}
+bool check_setup_data(int KBit){
+  int count = 0;
+  int DATA_LENGTH = 5;
+  int flag = 0;
+  String data_buff;
+  String correct_msg = "[R"+KBit+"1]";
+  while (count <15){
+    if(Serial1.available() > 0 and flag < 2 and data_buff.length() < DATA_LENGTH){
+      char msg = Serial1.read();
+      if (msg == '[' or flag == 1){
+        data_buff += msg;
+        flag = 1;
+        count = 0;
+        if(msg == ']' and data_buff.length() == DATA_LENGTH){
+          flag =2;
+          count = 15;
+        }
+      }else{
+        data_buff = "";
+        count = count+1;
+
+      }
+    }else{
+      data_buff = "";
+      count = count+1;
+    }
+  }
+  
+  if( data_buff == correct_msg){
+    return true;
+  }else{
+    return false;
+  }
+
+
 }
 void serial_write_string(String stringData) { 
 
