@@ -354,7 +354,7 @@
             var modem_freq = sat_info.modem_freq;
             var symbol_rate = sat_info.symbol_rate;
             var nid      = sat_info.nid;
-            console.log(nid);
+            //console.log(nid);
             document.getElementById("satellite_id").value = sat_id;
             document.getElementById("satellite_name").value = sat_name;
             document.getElementById("satellite_location").value = sat_loc;
@@ -402,8 +402,12 @@
         method: "POST",
         data: JSON.stringify(heading_json),
         contentType: 'application/json; charset=utf-8'  
-        }).done(function() {
-        console.log("ajax done");
+        }).done(function(data) {
+          console.log("ajax done");
+          alert(data.result_set_heading);
+          if (data.result_set_heading == "SUCCESS"){
+            RequestData();
+          }
         }).fail(function() {
         console.log("ajax fail");
         alert("dai");
@@ -422,8 +426,12 @@
         method: "POST",
         data: JSON.stringify(angle_json),
         contentType: 'application/json; charset=utf-8'  
-        }).done(function() {
-        console.log("ajax done");
+        }).done(function(data) {
+          console.log("ajax done");
+          alert(data.result_set_angle);
+          if (data.result_set_angle == "SUCCESS"){
+            RequestData();
+          }
         }).fail(function() {
         console.log("ajax fail");
         });
@@ -438,8 +446,12 @@
         method: "POST",
         data: JSON.stringify(voltage_json),
         contentType: 'application/json; charset=utf-8'  
-        }).done(function() {
-        console.log("ajax done");
+        }).done(function(data) {
+          console.log("ajax done");
+          alert(data.result_set_voltage);
+          if (data.result_set_voltage == "SUCCESS"){
+            RequestData();
+          }
         }).fail(function() {
         console.log("ajax fail");
         });
@@ -463,8 +475,8 @@
         var lnb_lo_val = $("#lnb_lo").val();
         var rxpol_val = $("#RxButton").text().toLowerCase();
         var txpol_val = $("#TxButton").text().toLowerCase();
-        console.log("rxpol_val2:",rxpol_val);
-        console.log("txpol_val2:",txpol_val);
+        // console.log("rxpol_val2:",rxpol_val);
+        // console.log("txpol_val2:",txpol_val);
         var modem_freq_val = $("#modem_freq").val();
         var symbol_val = $("#symbol_rate").val();
         var nid_val = $("#nid").val();
@@ -475,8 +487,12 @@
           method: "POST",
           data: JSON.stringify(satellite_json),
           contentType: 'application/json; charset=utf-8'  
-        }).done(function() {
+        }).done(function(data) {
           console.log("ajax done");
+          alert(data.result_set_satellite);
+          if (data.result_set_satellite == "SUCCESS"){
+            RequestData();
+          }
         }).fail(function() {
           console.log("ajax fail");
         });

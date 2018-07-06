@@ -218,8 +218,8 @@ void handle_setup() {
       if (server.hasArg("plain")){
         String data = server.arg("plain");
         Serial.println(data);
-        StaticJsonBuffer<800> jBuffer;
-        JsonObject& jObject = jBuffer.parseObject(data);
+        StaticJsonBuffer<600> json_rx_buffer;
+        JsonObject& jObject = json_rx_buffer.parseObject(data);
         if (jObject["topic"] == "set_heading"){
           int heading = jObject["data"]["heading"];
           Serial.println(heading);
@@ -239,8 +239,24 @@ void handle_setup() {
           String msg_send = StartBit+SBit+KBit+heading_buff+bowofs_buff+crc_value+StopBit;
           Serial.print(msg_send);
           serial_write_string(msg_send);
-
-          //Serial1.write(writeString(msg_send));
+          bool result_set_data = check_setup_data(KBit);
+          Serial.print("RESULT1:");
+          Serial.print(result_set_data);
+          StaticJsonBuffer<50> json_tx_buffer;
+          JsonObject& root = json_tx_buffer.createObject();
+          if (result_set_data == true){
+            root["result_set_heading"] = "SUCCESS";
+            String msg;
+            root.printTo(msg);
+            server.sendHeader("Cache-Control", "no-cache");
+            server.send(200,"application/json",msg);  
+          }else{
+            root["result_set_heading"] = "FAILURE";
+            String msg;
+            root.printTo(msg);
+            server.sendHeader("Cache-Control", "no-cache");
+            server.send(200,"application/json",msg); 
+          }
         }else if (jObject["topic"] == "sat_select"){
           String sat_id = jObject["sat_id"];
           if (sat_id == "1"){
@@ -273,8 +289,13 @@ void handle_setup() {
           int symbol_rate = jObject["data"]["symbol_rate"];
           String nid = jObject["data"]["nid"];
           KBit = "3";
+          //
           char modem_freq_buff[8];
           char symbol_rate_buff[6];
+          char local_frequency_buff[5];
+          char rx_pol_buff[1];
+          char tx_pol_buff[1];
+          char lnb_tone_buff[1];
           // Serial1.print(StartBit);
           // Serial1.print(KBit);
           // Serial1.printf("%08d", modem_freq);
@@ -286,27 +307,112 @@ void handle_setup() {
           // Serial1.printf("%01d",tx_pol);
           // Serial1.printf("%01d",lnb_tone);
           // Serial1.print(StopBit);
+          //
           sprintf(modem_freq_buff, "%08d", modem_freq);
           sprintf(symbol_rate_buff, "%06d", symbol_rate);
-          String msg_send = StartBit + KBit ;
+          String satellite_name_buff = padding_string(satellite_name,20);
+          String satloct_convert_buff = satloct_convert(satellite_location);
+          sprintf(local_frequency_buff,"%05d", local_frequency);
+          sprintf(rx_pol_buff, "%01d", rx_pol);
+          sprintf(tx_pol_buff, "%01d", tx_pol);
+          sprintf(lnb_tone_buff, "%01d", lnb_tone);
+          String msg_data = String(modem_freq_buff)+String(symbol_rate_buff)+satellite_name_buff+satloct_convert_buff+String(local_frequency_buff)+String(local_frequency_buff)+String(rx_pol_buff)+String(tx_pol_buff)+String(lnb_tone_buff);
+          int crc_value = crc_encoding(msg_data);
+          String msg_send = StartBit+SBit+KBit+msg_data+crc_value+StopBit;
+          
+          Serial.print(msg_send);
+          serial_write_string(msg_send);
+          bool result_set_data = check_setup_data(KBit);
+          Serial.print("RESULT1:");
+          Serial.print(result_set_data);
+          StaticJsonBuffer<50> json_tx_buffer;
+          JsonObject& root = json_tx_buffer.createObject();
+          if (result_set_data == true){
+            root["result_set_satellite"] = "SUCCESS";
+            String msg;
+            root.printTo(msg);
+            server.sendHeader("Cache-Control", "no-cache");
+            server.send(200,"application/json",msg);  
+          }else{
+            root["result_set_satellite"] = "FAILURE";
+            String msg;
+            root.printTo(msg);
+            server.sendHeader("Cache-Control", "no-cache");
+            server.send(200,"application/json",msg); 
+          }
         }else if(jObject["topic"] == "set_angle"){
           int az = jObject["data"]["az"];
           int el = jObject["data"]["el"];
           int pol = jObject["data"]["pol"];
           KBit = "4";
-          Serial1.print(StartBit);
-          Serial1.print(KBit);
-          Serial1.printf("%04d", az);
-          Serial1.printf("%04d", el);
-          Serial1.printf("%04d", pol);
-          Serial1.print(StopBit);
+          char az_buff[4];
+          char el_buff[4];
+          char pol_buff[4];
+          sprintf(az_buff, "%04d", az);
+          sprintf(el_buff, "%04d", el);
+          sprintf(pol_buff, "%04d", pol);
+          // Serial1.print(StartBit);
+          // Serial1.print(KBit);
+          // Serial1.printf("%04d", az);
+          // Serial1.printf("%04d", el);
+          // Serial1.printf("%04d", pol);
+          // Serial1.print(StopBit);
+          String msg_data = String(az_buff)+String(el_buff)+String(pol_buff);
+          int crc_value = crc_encoding(msg_data);
+          String msg_send = StartBit + SBit + KBit + msg_data + crc_value + StopBit;
+          Serial.print(msg_send);
+          serial_write_string(msg_send);
+          bool result_set_data = check_setup_data(KBit);
+          Serial.print("RESULT1:");
+          Serial.print(result_set_data);
+          StaticJsonBuffer<50> json_tx_buffer;
+          JsonObject& root = json_tx_buffer.createObject();
+          if (result_set_data == true){
+            root["result_set_angle"] = "SUCCESS";
+            String msg;
+            root.printTo(msg);
+            server.sendHeader("Cache-Control", "no-cache");
+            server.send(200,"application/json",msg);  
+          }else{
+            root["result_set_angle"] = "FAILURE";
+            String msg;
+            root.printTo(msg);
+            server.sendHeader("Cache-Control", "no-cache");
+            server.send(200,"application/json",msg); 
+          }
         }else if(jObject["topic"] == "set_voltage"){
           int vsatvolt = jObject["data"]["VsatVolt"];
           KBit = "5";
-          Serial1.print(StartBit);
-          Serial1.print(KBit);
-          Serial1.printf("%02d", vsatvolt);
-          Serial1.print(StopBit);
+          char vsatvolt_buff[2];
+          // Serial1.print(StartBit);
+          // Serial1.print(KBit);
+          // Serial1.printf("%02d", vsatvolt);
+          // Serial1.print(StopBit);
+          sprintf(vsatvolt_buff, "%02d", vsatvolt);
+          String msg_data = String(vsatvolt_buff);
+          int crc_value = crc_encoding(msg_data);
+          String msg_send = StartBit + SBit + KBit + msg_data + crc_value + StopBit;
+          Serial.print("VOLTAGE:");
+          Serial.print(msg_send);
+          serial_write_string(msg_send);
+          bool result_set_data = check_setup_data(KBit);
+          Serial.print("RESULT1:");
+          Serial.print(result_set_data);
+          StaticJsonBuffer<50> json_tx_buffer;
+          JsonObject& root = json_tx_buffer.createObject();
+          if (result_set_data == true){
+            root["result_set_voltage"] = "SUCCESS";
+            String msg;
+            root.printTo(msg);
+            server.sendHeader("Cache-Control", "no-cache");
+            server.send(200,"application/json",msg);  
+          }else{
+            root["result_set_voltage"] = "FAILURE";
+            String msg;
+            root.printTo(msg);
+            server.sendHeader("Cache-Control", "no-cache");
+            server.send(200,"application/json",msg); 
+          }
         }else{
             Serial.println("faileddddd");
         }
@@ -539,34 +645,39 @@ int crc_encoding(String str){
   }
   return crc;
 }
-bool check_setup_data(int KBit){
+bool check_setup_data(String KBit){
   int count = 0;
   int DATA_LENGTH = 5;
   int flag = 0;
   String data_buff;
-  String correct_msg = "[R"+KBit+"1]";
-  while (count <15){
+  String SUCCESS_RESULT = "1";
+  String correct_msg = "[R"+ KBit + SUCCESS_RESULT +"]";
+  while (count < 15){
     if(Serial1.available() > 0 and flag < 2 and data_buff.length() < DATA_LENGTH){
       char msg = Serial1.read();
       if (msg == '[' or flag == 1){
         data_buff += msg;
         flag = 1;
         count = 0;
+        Serial.println(data_buff);
         if(msg == ']' and data_buff.length() == DATA_LENGTH){
+          Serial.println(data_buff);
           flag =2;
           count = 15;
         }
       }else{
         data_buff = "";
         count = count+1;
+        Serial.println("NO DATA");
 
       }
     }else{
       data_buff = "";
       count = count+1;
+      Serial.println("NO DATA");
     }
   }
-  
+  Serial.println(data_buff);
   if( data_buff == correct_msg){
     return true;
   }else{
