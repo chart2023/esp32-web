@@ -320,7 +320,7 @@ void handle_setup() {
           int crc_value = crc_encoding(msg_data);
           String msg_send = StartBit+SBit+KBit+msg_data+crc_value+StopBit;
           
-          Serial.print(msg_send);
+          Serial.println(msg_send);
           serial_write_string(msg_send);
           bool result_set_data = check_setup_data(KBit);
           Serial.print("RESULT1:");
@@ -653,8 +653,11 @@ bool check_setup_data(String KBit){
   String SUCCESS_RESULT = "1";
   String correct_msg = "[R"+ KBit + SUCCESS_RESULT +"]";
   while (count < 15){
+    Serial.print("START:");
+    Serial.println(count);
     if(Serial1.available() > 0 and flag < 2 and data_buff.length() < DATA_LENGTH){
       char msg = Serial1.read();
+      Serial.println(msg);
       if (msg == '[' or flag == 1){
         data_buff += msg;
         flag = 1;
@@ -662,7 +665,7 @@ bool check_setup_data(String KBit){
         Serial.println(data_buff);
         if(msg == ']' and data_buff.length() == DATA_LENGTH){
           Serial.println(data_buff);
-          flag =2;
+          flag = 2;
           count = 15;
         }
       }else{
@@ -754,10 +757,11 @@ void setup() {
   server.on("/", handle_root);
   server.on("/info", handle_info);
   server.on("/setup", handle_setup);
+  server.on("/setup.html", handle_setup);
   server.on("/login", handle_login);
-  server.on("/inline", []() {
-    server.send(200, "text/plain", "this works without need of authentification");
-  });
+  // server.on("/inline", []() {
+  //   server.send(200, "text/plain", "this works without need of authentification");
+  // });
   const char * headerkeys[] = {"User-Agent", "Cookie"} ;
   size_t headerkeyssize = sizeof(headerkeys) / sizeof(char*);
   //ask server to track these headers
